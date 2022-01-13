@@ -103,6 +103,7 @@ class Pin(object):
         
     def check_board_type(self):
         type_pin = self.dict()["BOARD_TYPE"]
+        self._dict = self._dict_1
         # GPIO.setup(type_pin, GPIO.IN)
         # if GPIO.input(type_pin) == 0:
         #     self._dict = self._dict_1

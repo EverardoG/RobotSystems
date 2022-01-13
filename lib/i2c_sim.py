@@ -12,37 +12,37 @@ class I2C(object):
         # self._smbus = SMBus(self._bus)
 
     def _i2c_write_byte(self, addr, data):   # i2C 写系列函数
-        pass
+        return 1
         # self._debug("_i2c_write_byte: [0x{:02X}] [0x{:02X}]".format(addr, data))
         # print('[_i2c_write_byte] addr: {}, data: {}'.format(addr,data))
         # return self._smbus.write_byte(addr, data)
     
     def _i2c_write_byte_data(self, addr, reg, data):
-        pass
+        return 1
         # self._debug("_i2c_write_byte_data: [0x{:02X}] [0x{:02X}] [0x{:02X}]".format(addr, reg, data))
         # print('[_i2c_write_byte_data] addr: {}, reg: {}, data: {}'.format(addr, reg, data))
         # return self._smbus.write_byte_data(addr, reg, data)
     
     def _i2c_write_word_data(self, addr, reg, data):
-        pass
+        return 1
         # self._debug("_i2c_write_word_data: [0x{:02X}] [0x{:02X}] [0x{:04X}]".format(addr, reg, data))
         # print('[_i2c_write_word_data] addr: {}, reg: {}, data: {}'.format(addr, reg, data))
         # return self._smbus.write_word_data(addr, reg, data)
     
     def _i2c_write_i2c_block_data(self, addr, reg, data):
-        pass
+        return 1
         # self._debug("_i2c_write_i2c_block_data: [0x{:02X}] [0x{:02X}] {}".format(addr, reg, data))
         # print('[_i2c_write_i2c_block_data] addr: {}, reg: {}, data: {}'.format(addr, reg, data))
         # return self._smbus.write_i2c_block_data(addr, reg, data)
     
     def _i2c_read_byte(self, addr):   # i2C 读系列函数
-        pass
+        return 1
         # self._debug("_i2c_read_byte: [0x{:02X}]".format(addr))
         # print('[_i2c_read_byte] addr: {}'.format(addr))
         # return self._smbus.read_byte(addr)
 
     def _i2c_read_i2c_block_data(self, addr, reg, num):
-        pass
+        return 1
         # self._debug("_i2c_read_i2c_block_data: [0x{:02X}] [0x{:02X}] [{}]".format(addr, reg, num))
         # print('[_i2c_read_i2c_block_data] addr: {}, reg: {}, num: {}'.format(addr, reg, num))
         # return self._smbus.read_i2c_block_data(addr, reg, num)

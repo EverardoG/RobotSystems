@@ -1,5 +1,7 @@
 """Class to control PiCar-X with simulated classes for offline testing."""
 import os
+import time
+import numpy as np
 import platform
 if platform.node() == 'raspberrypi':  # Import real classes.
     from servo import Servo
@@ -14,60 +16,64 @@ else: # This is being run without access to the PiCar-X hardware (not on raspber
     from adc_sim import ADC
     from filedb_sim import fileDB
 
+import logging
+logging.basicConfig(format="%(asctime)s:%(message)s", level=logging.INFO, datefmt="%H:%M:%S")
+from logdecorator import log_on_start,log_on_error,log_on_end
+
+import atexit
+
+
 class Picarx(object):
     PERIOD = 4095
-    PRESCALER = 10
+    PRESCALER = 10  #todo this may be the scaling referred to in the prompt.
     TIMEOUT = 0.02
 
     def __init__(self):
-        self.dir_servo_pin = Servo(PWM('P2'))  #Servo object, inherits from PWM, which inheirits from I2C
-        print(self.dir_servo_pin)
-        self.camera_servo_pin1 = Servo(PWM('P0'))
-        self.camera_servo_pin2 = Servo(PWM('P1'))
-        home_directory = os.path.expanduser('~')  # Home directory changes for simulated Picarx vs real.
-        self.config_flie = fileDB(home_directory + '/.config')
-        self.dir_cal_value = int(self.config_flie.get("picarx_dir_servo", default_value=0))
-        print(self.dir_cal_value)
-        self.cam_cal_value_1 = int(self.config_flie.get("picarx_cam1_servo", default_value=0))
-        print(self.cam_cal_value_1)
-        self.cam_cal_value_2 = int(self.config_flie.get("picarx_cam2_servo", default_value=0))
-        print(self.cam_cal_value_2)
-        self.dir_servo_pin.angle(self.dir_cal_value)
-        self.camera_servo_pin1.angle(self.cam_cal_value_1)
-        self.camera_servo_pin2.angle(self.cam_cal_value_2)
-
+        # Config file setup.
+        home_directory = os.path.expanduser('~')  # Home directory changes for simulated Picarx (laptop), vs real (raspi).
+        self.config_file_obj = fileDB(home_directory + '/.config')
+        # Create hardware interface objects.
+        self.servo_camera_pan = Servo(PWM('P0'))
+        self.servo_camera_tilt = Servo(PWM('P1'))
+        self.servo_dir = Servo(PWM('P2'))
+        self.dir_cal_value = int(self.config_file_obj.get("picarx_dir_servo", default_value=0))
+        self.cam_cal_value_pan = int(self.config_file_obj.get("picarx_cam1_servo", default_value=0))
+        self.cam_cal_value_tilt = int(self.config_file_obj.get("picarx_cam2_servo", default_value=0))
+        self.servo_dir.angle(self.dir_cal_value)
+        self.servo_camera_pan.angle(self.cam_cal_value_pan)
+        self.servo_camera_tilt.angle(self.cam_cal_value_tilt)
         self.left_rear_pwm_pin = PWM("P13")
         self.right_rear_pwm_pin = PWM("P12")
         self.left_rear_dir_pin = Pin("D4")
         self.right_rear_dir_pin = Pin("D5")
-
-
         self.S0 = ADC('A0')
         self.S1 = ADC('A1')
         self.S2 = ADC('A2')
 
         self.motor_direction_pins = [self.left_rear_dir_pin, self.right_rear_dir_pin]
         self.motor_speed_pins = [self.left_rear_pwm_pin, self.right_rear_pwm_pin]
-        self.cali_dir_value = self.config_flie.get("picarx_dir_motor", default_value="[1,1]")
-        self.cali_dir_value = [int(i.strip()) for i in self.cali_dir_value.strip("[]").split(",")]
-        self.cali_speed_value = [0, 0]
-        self.dir_current_angle = 0
         for pin in self.motor_speed_pins:
             pin.period(self.PERIOD)
             pin.prescaler(self.PRESCALER)
+        self.cali_dir_value = self.config_file_obj.get("picarx_dir_motor", default_value="[1,1]")
+        self.cali_dir_value = [int(i.strip()) for i in self.cali_dir_value.strip("[]").split(",")]
+        self.cali_speed_value = [0, 0]
+        self.dir_current_angle = 0
 
 
-
+    @log_on_start(logging.DEBUG, "[set_motor_speed] motor: {motor}, speed: {speed}")
+    @log_on_error(logging.DEBUG, "[set_motor_speed] Error")
     def set_motor_speed(self,motor,speed):
-        # global cali_speed_value,cali_dir_value
+        #todo what are the units of speed???
         motor -= 1
         if speed >= 0:
             direction = 1 * self.cali_dir_value[motor]
         elif speed < 0:
             direction = -1 * self.cali_dir_value[motor]
         speed = abs(speed)
-        if speed != 0:
-            speed = int(speed /2 ) + 50
+        # todo I believe the below lines are the "speed scaling"
+        # if speed != 0:
+        #     speed = int(speed /2 ) + 50
         speed = speed - self.cali_speed_value[motor]
         if direction < 0:
             self.motor_direction_pins[motor].high()
@@ -76,9 +82,12 @@ class Picarx(object):
             self.motor_direction_pins[motor].low()
             self.motor_speed_pins[motor].pulse_width_percent(speed)
 
+    @log_on_start(logging.DEBUG, "[motor_speed_calibration] value: {value}")
+    @log_on_error(logging.DEBUG, "[motor_speed_calibration] Error")
     def motor_speed_calibration(self,value):
-        # global cali_speed_value,cali_dir_value
+        """Todo This method looks like it does not work. It is not used in the example code. What is value supposed to be?? A list or int?"""
         self.cali_speed_value = value
+        #todo: value has to be a number to use comparitive operator, but then you can't index a number...
         if value < 0:
             self.cali_speed_value[0] = 0
             self.cali_speed_value[1] = abs(self.cali_speed_value)
@@ -86,58 +95,68 @@ class Picarx(object):
             self.cali_speed_value[0] = abs(self.cali_speed_value)
             self.cali_speed_value[1] = 0
 
+    @log_on_start(logging.DEBUG, "[motor_direction_calibration] motor: {motor}, value: {value}")
+    @log_on_error(logging.DEBUG, "[motor_direction_calibration] Error")
     def motor_direction_calibration(self,motor, value):
         # 0: positive direction
         # 1:negative direction
-        # global cali_dir_value
         motor -= 1
         if value == 1:
             self.cali_dir_value[motor] = -1 * self.cali_dir_value[motor]
-        self.config_flie.set("picarx_dir_motor", self.cali_dir_value)
+        self.config_file_obj.set("picarx_dir_motor", self.cali_dir_value)
 
-
+    @log_on_start(logging.DEBUG, "[dir_servo_angle_calibration] value: {value}")
+    @log_on_error(logging.DEBUG, "[dir_servo_angle_calibration] Error")
     def dir_servo_angle_calibration(self,value):
-        # global dir_cal_value
         self.dir_cal_value = value
-        print("calibrationdir_cal_value:",self.dir_cal_value)
-        self.config_flie.set("picarx_dir_servo", "%s"%value)
-        self.dir_servo_pin.angle(value)
+        # print("calibrationdir_cal_value:",self.dir_cal_value)
+        self.config_file_obj.set("picarx_dir_servo", "%s"%value)
+        self.servo_dir.angle(value)
 
+    @log_on_start(logging.DEBUG, "[set_dir_servo_angle] value: {value}")
+    @log_on_error(logging.DEBUG, "[set_dir_servo_angle] Error")
     def set_dir_servo_angle(self,value):
-        # global dir_cal_value
         self.dir_current_angle = value
         angle_value  = value + self.dir_cal_value
-        print("angle_value:",angle_value)
-        # print("set_dir_servo_angle_1:",angle_value)
-        # print("set_dir_servo_angle_2:",dir_cal_value)
-        self.dir_servo_pin.angle(angle_value)
+        # print("angle_value:",angle_value)
+        # # print("set_dir_servo_angle_1:",angle_value)
+        # # print("set_dir_servo_angle_2:",dir_cal_value)
+        self.servo_dir.angle(angle_value)
 
+    @log_on_start(logging.DEBUG, "[camera_servo1_angle_calibration] value: {value}")
+    @log_on_error(logging.DEBUG, "[camera_servo1_angle_calibration] Error")
     def camera_servo1_angle_calibration(self,value):
-        # global cam_cal_value_1
-        self.cam_cal_value_1 = value
-        self.config_flie.set("picarx_cam1_servo", "%s"%value)
-        print("cam_cal_value_1:",self.cam_cal_value_1)
-        self.camera_servo_pin1.angle(value)
+        self.cam_cal_value_pan = value
+        self.config_file_obj.set("picarx_cam1_servo", "%s"%value)
+        # print("cam_cal_value_pan:",self.cam_cal_value_pan)
+        self.servo_camera_pan.angle(value)
 
+    @log_on_start(logging.DEBUG, "[camera_servo2_angle_calibration] value: {value}")
+    @log_on_error(logging.DEBUG, "[camera_servo2_angle_calibration] Error")
     def camera_servo2_angle_calibration(self,value):
-        # global cam_cal_value_2
-        self.cam_cal_value_2 = value
-        self.config_flie.set("picarx_cam2_servo", "%s"%value)
-        print("picarx_cam2_servo:",self.cam_cal_value_2)
-        self.camera_servo_pin2.angle(value)
+        self.cam_cal_value_tilt = value
+        self.config_file_obj.set("picarx_cam2_servo", "%s"%value)
+        # print("picarx_cam2_servo:",self.cam_cal_value_tilt)
+        self.servo_camera_tilt.angle(value)
 
+    @log_on_start(logging.DEBUG, "[set_camera_servo1_angle] value: {value}")
+    @log_on_error(logging.DEBUG, "[set_camera_servo1_angle] Error")
     def set_camera_servo1_angle(self,value):
-        # global cam_cal_value_1
-        self.camera_servo_pin1.angle(-1*(value + -1*self.cam_cal_value_1))
-        # print("self.cam_cal_value_1:",self.cam_cal_value_1)
-        print((value + self.cam_cal_value_1))
+        self.servo_camera_pan.angle(-1*(value + -1*self.cam_cal_value_pan))
+        # print("self.cam_cal_value_pan:",self.cam_cal_value_pan)
+        # print((value + self.cam_cal_value_pan))
 
+    @log_on_start(logging.DEBUG, "[set_camera_servo2_angle] value: {value}")
+    @log_on_error(logging.DEBUG, "[set_camera_servo2_angle] Error")
     def set_camera_servo2_angle(self,value):
-        # global cam_cal_value_2
-        self.camera_servo_pin2.angle(-1*(value + -1*self.cam_cal_value_2))
-        # print("self.cam_cal_value_2:",self.cam_cal_value_2)
-        print((value + self.cam_cal_value_2))
+        # global cam_cal_value_tilt
+        self.servo_camera_tilt.angle(-1*(value + -1*self.cam_cal_value_tilt))
+        # print("self.cam_cal_value_tilt:",self.cam_cal_value_tilt)
+        # print((value + self.cam_cal_value_tilt))
 
+    @log_on_start(logging.DEBUG, "[get_adc_value] Enter")
+    @log_on_error(logging.DEBUG, "[get_adc_value] Error")
+    @log_on_end(logging.DEBUG, "[get_adc_value] Result: {result}")
     def get_adc_value(self):
         adc_value_list = []
         adc_value_list.append(self.S0.read())
@@ -145,10 +164,14 @@ class Picarx(object):
         adc_value_list.append(self.S2.read())
         return adc_value_list
 
+    @log_on_start(logging.DEBUG, "[set_power] speed: {speed}")
+    @log_on_error(logging.DEBUG, "[set_power] Error")
     def set_power(self,speed):
         self.set_motor_speed(1, speed)
         self.set_motor_speed(2, speed) 
 
+    @log_on_start(logging.DEBUG, "[backward] speed: {speed}")
+    @log_on_error(logging.DEBUG, "[backward] Error")
     def backward(self,speed):
         current_angle = self.dir_current_angle
         if current_angle != 0:
@@ -157,7 +180,7 @@ class Picarx(object):
             if abs_current_angle > 40:
                 abs_current_angle = 40
             power_scale = (100 - abs_current_angle) / 100.0 
-            print("power_scale:",power_scale)
+            # print("power_scale:",power_scale)
             if (current_angle / abs_current_angle) > 0:
                 self.set_motor_speed(1, -1*speed)
                 self.set_motor_speed(2, speed * power_scale)
@@ -168,30 +191,40 @@ class Picarx(object):
             self.set_motor_speed(1, -1*speed)
             self.set_motor_speed(2, speed)  
 
+    @log_on_start(logging.DEBUG, "[forward] speed: {speed}")
+    @log_on_error(logging.DEBUG, "[forward] Error")
     def forward(self,speed):
         current_angle = self.dir_current_angle
-        if current_angle != 0:
-            abs_current_angle = abs(current_angle)
-            # if abs_current_angle >= 0:
-            if abs_current_angle > 40:
-                abs_current_angle = 40
-            power_scale = (100 - abs_current_angle) / 100.0 
-            print("power_scale:",power_scale)
-            if (current_angle / abs_current_angle) > 0:
-                self.set_motor_speed(1, speed)
-                self.set_motor_speed(2, -1*speed * power_scale)
-            else:
-                self.set_motor_speed(1, speed * power_scale)
-                self.set_motor_speed(2, -1*speed )
-        else:
+        if current_angle == 0: # Both motors go same speed.
             self.set_motor_speed(1, speed)
-            self.set_motor_speed(2, -1*speed)                  
+            self.set_motor_speed(2, -1 * speed)
+        else: # Motors need different speeds to not slip.
+            # If the steering angle is 90 deg to the right, the left wheel should move at the forward speed while the
+            # right should not move (scaled to zero). A linear interpolation between directly forward and a 90 degree
+            # turn is a reasonable approximation for the distribution of speed values to achieve no slip.
+            abs_current_angle = abs(current_angle)
+            pwm_range = [speed,0]
+            angle_range = [0,90]
+            scaled_speed = np.interp(abs_current_angle,angle_range,pwm_range)
+            # if abs_current_angle > 40: abs_current_angle = 40
+            # power_scale = (100 - abs_current_angle) / 100.0
+            # # print("power_scale:",power_scale)
+            if (current_angle / abs_current_angle) > 0: # Turning right
+                self.set_motor_speed(1, speed)
+                self.set_motor_speed(2, -1*scaled_speed)
+            else: # Turning left
+                self.set_motor_speed(1, scaled_speed)
+                self.set_motor_speed(2, -1*speed )
 
+    @log_on_start(logging.DEBUG, "[stop] Enter")
+    @log_on_error(logging.DEBUG, "[stop] Error")
     def stop(self):
         self.set_motor_speed(1, 0)
         self.set_motor_speed(2, 0)
 
-
+    @log_on_start(logging.DEBUG, "[Get_distance] Enter")
+    @log_on_error(logging.DEBUG, "[Get_distance] Error")
+    @log_on_end(logging.DEBUG, "[Get_distance] Result: {result}")
     def Get_distance(self):
         timeout=0.01
         trig = Pin('D8')
@@ -218,9 +251,74 @@ class Picarx(object):
         #print(cm)
         return cm
 
+    @log_on_start(logging.DEBUG, "[cal_steering] Enter")
+    @log_on_error(logging.DEBUG, "[cal_steering] Error")
+    def cal_steering(self):
+        """Calibrate the steering."""
+        desired_angle = 0
+        while True:
+            input("\nMove the robot to an open area. \nPress enter to begin calibration.\n> ")
+            angle_calibrated = desired_angle + self.dir_cal_value
+            self.servo_dir.angle(angle_calibrated)
+            self.forward(50)
+            time.sleep(4)
+            self.stop()
+            while True:
+                try:
+                    error = float(input("How many degrees of angle was the steering off? "
+                              "\n(Negative values for left, positive values for right, zero if approx straight)\n> "))
+                    break
+                except: print("\nInvalid entry. Please enter a number.")
+            if error == 0: break
+            self.dir_cal_value = self.dir_cal_value + error
+
+    @log_on_start(logging.DEBUG, "[shutdown] Enter")
+    def shutdown(self):
+        logging.info("SHUTDOWN ON EXIT. MOTOR SPEEDS SET TO 0.")
+        self.stop()
+
+
+def test(px):
+    # def set_motor_speed(self, motor, speed):
+    px.set_motor_speed(1, 5)
+    # def motor_speed_calibration(self, value):
+    # px.motor_speed_calibration(10)
+    # def motor_direction_calibration(self, motor, value):
+    px.motor_direction_calibration(1,1)
+    # def dir_servo_angle_calibration(self,value):
+    px.dir_servo_angle_calibration(1)
+    # def set_dir_servo_angle(self, value):
+    px.set_dir_servo_angle(1)
+    # def camera_servo1_angle_calibration(self, value):
+    px.camera_servo1_angle_calibration(1)
+    px.camera_servo2_angle_calibration(1)
+    # def set_camera_servo1_angle(self, value):
+    px.set_camera_servo1_angle(1)
+    px.set_camera_servo2_angle(1)
+    # def get_adc_value(self):
+    px.get_adc_value()
+    # def set_power(self, speed):
+    px.set_power(10)
+    # def backward(self, speed):
+    px.backward(10)
+    px.forward(10)
+    px.stop()
+    px.Get_distance()
+    px.cal_steering()
+
+
+def main():
+    logging.getLogger().setLevel(logging.DEBUG)
+    # logging.getLogger().setLevel(logging.INFO)
+    px = Picarx()
+    atexit.register(px.shutdown)
+
+    test(px)
 
 if __name__ == "__main__":
-    px = Picarx()
+    main()
+
+    # px = Picarx()
     # px.forward(50)
     # time.sleep(1)
     # px.stop()
@@ -229,8 +327,8 @@ if __name__ == "__main__":
     # self.set_motor_speed(1, 1)
     # self.set_motor_speed(2, 1)
     # camera_servo_pin.angle(0)
-# set_camera_servo1_angle(cam_cal_value_1)
-# set_camera_servo2_angle(cam_cal_value_2)
+# set_camera_servo1_angle(cam_cal_value_pan)
+# set_camera_servo2_angle(cam_cal_value_tilt)
 # set_dir_servo_angle(dir_cal_value)
 
 # if __name__ == "__main__":

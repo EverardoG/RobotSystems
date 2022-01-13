@@ -52,24 +52,24 @@ class fileDB(object):
 	
 	def set(self, name, value):
 		"""Set value by data's name. Or create one if the arguement does not exist"""
-
-		# Read the file
-		conf = open(self.db,'r')
-		lines=conf.readlines()
-		conf.close()
-		file_len=len(lines)-1
-		flag = False
-		# Find the arguement and set the value
-		for i in range(file_len):
-			if lines[i][0] != '#':
-				if lines[i].split('=')[0].strip() == name:
-					lines[i] = '%s = %s\n' % (name, value)
-					flag = True
-		# If arguement does not exist, create one
-		if not flag:
-			lines.append('%s = %s\n\n' % (name, value))
-
-		# Save the file
-		conf = open(self.db,'w')
-		conf.writelines(lines)
-		conf.close()
+		pass
+		# # Read the file
+		# conf = open(self.db,'r')
+		# lines=conf.readlines()
+		# conf.close()
+		# file_len=len(lines)-1
+		# flag = False
+		# # Find the arguement and set the value
+		# for i in range(file_len):
+		# 	if lines[i][0] != '#':
+		# 		if lines[i].split('=')[0].strip() == name:
+		# 			lines[i] = '%s = %s\n' % (name, value)
+		# 			flag = True
+		# # If arguement does not exist, create one
+		# if not flag:
+		# 	lines.append('%s = %s\n\n' % (name, value))
+		#
+		# # Save the file
+		# conf = open(self.db,'w')
+		# conf.writelines(lines)
+		# conf.close()

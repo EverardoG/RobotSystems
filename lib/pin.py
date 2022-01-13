@@ -89,11 +89,7 @@ class Pin(object):
         if isinstance(pin, str):
             try:
                 self._board_name = pin
-                # todo the below line should be self.dict_1 or dict_2, right?
-                print(pin)
                 self._pin = self.dict()[pin]
-                print(self._dict_1)
-                print(self._dict_2)
             except Exception as e:
                 print(e)
                 self._error('Pin should be in %s, not %s' % (self._dict.keys(), pin))
