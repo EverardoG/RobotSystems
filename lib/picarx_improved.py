@@ -1,26 +1,17 @@
-
-import time
-try:
+"""Class to control PiCar-X with simulated classes for offline testing."""
+import platform
+if platform.node() == 'raspberrypi':  # Import real classes.
     from servo import Servo
     from pwm import PWM
     from pin import Pin
     from adc import ADC
     from filedb import fileDB
-    time.sleep(.01)
-except ImportError:
-    print ("This computer does not appear to be a PiCar-X system (ezblock is not present). Shadowing hardware calls with "
-           "substitue functions:")
+else: # This is being run without access to the PiCar-X hardware (not on raspberrypi). # Import simulation classes.
     from sim_ezblock import *
 
-from servo import Servo 
-from pwm import PWM
-from pin import Pin
-from adc import ADC
-from filedb import fileDB
-
-from os import sys
-# Add the path in case not working directory.
-sys.path.append('/home/ted/Documents/GitHub/RobotSystems/lib')
+# from os import sys
+# # Add the path in case not working directory.
+# sys.path.append('/home/ted/Documents/GitHub/RobotSystems/lib')
 
 
 class Picarx(object):
@@ -225,9 +216,9 @@ class Picarx(object):
 
 if __name__ == "__main__":
     px = Picarx()
-    px.forward(50)
-    time.sleep(1)
-    px.stop()
+    # px.forward(50)
+    # time.sleep(1)
+    # px.stop()
     # set_dir_servo_angle(0)
     # time.sleep(1)
     # self.set_motor_speed(1, 1)
