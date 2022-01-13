@@ -1,4 +1,5 @@
 """Class to control PiCar-X with simulated classes for offline testing."""
+import os
 import platform
 if platform.node() == 'raspberrypi':  # Import real classes.
     from servo import Servo
@@ -13,7 +14,6 @@ else: # This is being run without access to the PiCar-X hardware (not on raspber
 # # Add the path in case not working directory.
 # sys.path.append('/home/ted/Documents/GitHub/RobotSystems/lib')
 
-
 class Picarx(object):
     PERIOD = 4095
     PRESCALER = 10
@@ -21,9 +21,11 @@ class Picarx(object):
 
     def __init__(self):
         self.dir_servo_pin = Servo(PWM('P2'))
+        print(self.dir_servo_pin)
         self.camera_servo_pin1 = Servo(PWM('P0'))
         self.camera_servo_pin2 = Servo(PWM('P1'))
-        self.config_flie = fileDB('/home/kyle/.config')
+        home_directory = os.path.expanduser('~')  # Home directory changes for simulated Picarx vs real.
+        self.config_flie = fileDB(home_directory + '/.config')
         self.dir_cal_value = int(self.config_flie.get("picarx_dir_servo", default_value=0))
         self.cam_cal_value_1 = int(self.config_flie.get("picarx_cam1_servo", default_value=0))
         self.cam_cal_value_2 = int(self.config_flie.get("picarx_cam2_servo", default_value=0))
