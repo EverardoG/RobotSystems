@@ -12,7 +12,7 @@ class I2C(object):
     def __init__(self, *args, **kargs):  # *args表示位置参数（形式参数），可无，； **kargs表示默认值参数，可无。
         super().__init__()
         self._bus = 1
-        self._smbus = SMBus(self._bus)
+        # self._smbus = SMBus(self._bus)
     #
     # def _i2c_write_byte(self, addr, data):  # i2C 写系列函数
     #     # self._debug("_i2c_write_byte: [0x{:02X}] [0x{:02X}]".format(addr, data))

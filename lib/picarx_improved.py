@@ -8,11 +8,11 @@ if platform.node() == 'raspberrypi':  # Import real classes.
     from adc import ADC
     from filedb import fileDB
 else: # This is being run without access to the PiCar-X hardware (not on raspberrypi). # Import simulation classes.
-    from sim_ezblock import *
-
-# from os import sys
-# # Add the path in case not working directory.
-# sys.path.append('/home/ted/Documents/GitHub/RobotSystems/lib')
+    from servo_sim import Servo
+    from pwm_sim import PWM
+    from pin_sim import Pin
+    from adc_sim import ADC
+    from filedb_sim import fileDB
 
 class Picarx(object):
     PERIOD = 4095
@@ -20,7 +20,7 @@ class Picarx(object):
     TIMEOUT = 0.02
 
     def __init__(self):
-        self.dir_servo_pin = Servo(PWM('P2'))
+        self.dir_servo_pin = Servo(PWM('P2'))  #Servo object, inherits from PWM, which inheirits from I2C
         print(self.dir_servo_pin)
         self.camera_servo_pin1 = Servo(PWM('P0'))
         self.camera_servo_pin2 = Servo(PWM('P1'))
