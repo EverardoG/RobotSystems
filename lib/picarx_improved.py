@@ -23,7 +23,7 @@ class Picarx(object):
         self.dir_servo_pin = Servo(PWM('P2'))
         self.camera_servo_pin1 = Servo(PWM('P0'))
         self.camera_servo_pin2 = Servo(PWM('P1'))
-        self.config_flie = fileDB('/home/pi/.config')
+        self.config_flie = fileDB('/home/kyle/.config')
         self.dir_cal_value = int(self.config_flie.get("picarx_dir_servo", default_value=0))
         self.cam_cal_value_1 = int(self.config_flie.get("picarx_cam1_servo", default_value=0))
         self.cam_cal_value_2 = int(self.config_flie.get("picarx_cam2_servo", default_value=0))
