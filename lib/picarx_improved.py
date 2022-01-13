@@ -27,8 +27,11 @@ class Picarx(object):
         home_directory = os.path.expanduser('~')  # Home directory changes for simulated Picarx vs real.
         self.config_flie = fileDB(home_directory + '/.config')
         self.dir_cal_value = int(self.config_flie.get("picarx_dir_servo", default_value=0))
+        print(self.dir_cal_value)
         self.cam_cal_value_1 = int(self.config_flie.get("picarx_cam1_servo", default_value=0))
+        print(self.dir_cal_value_1)
         self.cam_cal_value_2 = int(self.config_flie.get("picarx_cam2_servo", default_value=0))
+        print(self.dir_cal_value_2)
         self.dir_servo_pin.angle(self.dir_cal_value)
         self.camera_servo_pin1.angle(self.cam_cal_value_1)
         self.camera_servo_pin2.angle(self.cam_cal_value_2)
