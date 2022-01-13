@@ -1,10 +1,26 @@
-# from ezblock import Servo,PWM,fileDB,Pin,ADC
+
+import time
+try:
+    from servo import Servo
+    from pwm import PWM
+    from pin import Pin
+    from adc import ADC
+    from filedb import fileDB
+    time.sleep(.01)
+except ImportError:
+    print ("This computer does not appear to be a PiCar-X system (ezblock is not present). Shadowing hardware calls with "
+           "substitue functions:")
+    from sim_ezblock import *
+
 from servo import Servo 
 from pwm import PWM
 from pin import Pin
 from adc import ADC
 from filedb import fileDB
-import time
+
+from os import sys
+# Add the path in case not working directory.
+sys.path.append('/home/ted/Documents/GitHub/RobotSystems/lib')
 
 
 class Picarx(object):
@@ -40,7 +56,6 @@ class Picarx(object):
         self.cali_dir_value = [int(i.strip()) for i in self.cali_dir_value.strip("[]").split(",")]
         self.cali_speed_value = [0, 0]
         self.dir_current_angle = 0
-        #初始化PWM引脚
         for pin in self.motor_speed_pins:
             pin.period(self.PERIOD)
             pin.prescaler(self.PRESCALER)
