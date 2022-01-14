@@ -25,9 +25,9 @@ def parallel_park(px,direction):
     time.sleep(1)
     px.backward(50)
     px.set_dir_servo_angle(dir_modifier*40)
-    time.sleep(0.5)
+    time.sleep(0.75)
     px.set_dir_servo_angle(dir_modifier * -40)
-    time.sleep(0.5)
+    time.sleep(0.75)
     px.stop()
 
 def three_point_turn(px,direction):
@@ -39,13 +39,14 @@ def three_point_turn(px,direction):
     px.forward(50)
     time.sleep(0.5)
     px.set_dir_servo_angle(dir_modifier*40)
-    time.sleep(0.5)
+    time.sleep(1)
     px.backward(50)
     px.set_dir_servo_angle(dir_modifier * -40)
-    time.sleep(0.5)
+    time.sleep(0.75)
     px.forward(50)
     px.set_dir_servo_angle(0)
     time.sleep(0.5)
+    px.stop()
 
 def get_dir_response():
     ans_map = {'l': 'left', 'r': 'right'}
