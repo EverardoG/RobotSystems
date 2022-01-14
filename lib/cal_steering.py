@@ -24,5 +24,7 @@ def cal_steering(px):
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.DEBUG)
+    print("Init car...\n")
     px = picarx_improved.Picarx()
+    print("Made it...\n")
     cal_steering(px)
