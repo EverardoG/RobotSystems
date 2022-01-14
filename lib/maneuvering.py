@@ -77,7 +77,7 @@ def get_action_response():
     return response
 
 def main():
-    logging.getLogger().setLevel(logging.DEBUG)
+    logging.getLogger().setLevel(logging.INFO)
     px = picarx_improved.Picarx()
 
     while True:
