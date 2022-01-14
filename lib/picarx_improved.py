@@ -18,6 +18,7 @@ else: # This is being run without access to the PiCar-X hardware (not on raspber
 
 import logging
 logging.basicConfig(format="%(asctime)s:%(message)s", level=logging.INFO, datefmt="%H:%M:%S")
+logging.getLogger().setLevel(logging.DEBUG)
 from logdecorator import log_on_start,log_on_error,log_on_end
 
 import atexit
@@ -59,6 +60,7 @@ class Picarx(object):
         self.cali_dir_value = [int(i.strip()) for i in self.cali_dir_value.strip("[]").split(",")]
         self.cali_speed_value = [0, 0]
         self.dir_current_angle = 0
+        atexit.register(self.shutdown)
 
 
     @log_on_start(logging.DEBUG, "[set_motor_speed] motor: {motor}, speed: {speed}")
@@ -251,27 +253,6 @@ class Picarx(object):
         #print(cm)
         return cm
 
-    @log_on_start(logging.DEBUG, "[cal_steering] Enter")
-    @log_on_error(logging.DEBUG, "[cal_steering] Error")
-    def cal_steering(self):
-        """Calibrate the steering."""
-        desired_angle = 0
-        while True:
-            input("\nMove the robot to an open area. \nPress enter to begin calibration.\n> ")
-            angle_calibrated = desired_angle + self.dir_cal_value
-            self.servo_dir.angle(angle_calibrated)
-            self.forward(50)
-            time.sleep(4)
-            self.stop()
-            while True:
-                try:
-                    error = float(input("How many degrees of angle was the steering off? "
-                              "\n(Negative values for left, positive values for right, zero if approx straight)\n> "))
-                    break
-                except: print("\nInvalid entry. Please enter a number.")
-            if error == 0: break
-            self.dir_cal_value = self.dir_cal_value + error
-
     @log_on_start(logging.DEBUG, "[shutdown] Enter")
     def shutdown(self):
         logging.info("SHUTDOWN ON EXIT. MOTOR SPEEDS SET TO 0.")
@@ -304,14 +285,12 @@ def test(px):
     px.forward(10)
     px.stop()
     px.Get_distance()
-    px.cal_steering()
 
 
 def main():
     logging.getLogger().setLevel(logging.DEBUG)
     # logging.getLogger().setLevel(logging.INFO)
     px = Picarx()
-    atexit.register(px.shutdown)
 
     test(px)
 
