@@ -10,7 +10,7 @@ def cal_steering(px):
         angle_calibrated = desired_angle + px.dir_cal_value
         px.servo_dir.angle(angle_calibrated)
         px.forward(50)
-        time.sleep(4)
+        time.sleep(2)
         px.stop()
         while True:
             try:
