@@ -14,6 +14,11 @@ class Picarx(object):
     TIMEOUT = 0.02
 
     def __init__(self):
+        home_directory = os.path.expanduser(
+            '~')  # Home directory changes for simulated Picarx (laptop), vs real (raspi).
+        print('here')
+        print(self.config_file_obj.db)
+
         self.dir_servo_pin = Servo(PWM('P2'))
         self.camera_servo_pin1 = Servo(PWM('P0'))
         self.camera_servo_pin2 = Servo(PWM('P1'))
