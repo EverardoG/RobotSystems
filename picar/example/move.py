@@ -9,6 +9,7 @@ import time
 
 if __name__ == "__main__":
     try:
+        print('initalizing picar')
         px = Picarx()
         px.forward(30)
         time.sleep(0.5)
