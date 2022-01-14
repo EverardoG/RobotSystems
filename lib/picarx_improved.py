@@ -1,7 +1,9 @@
 """Class to control PiCar-X with simulated classes for offline testing."""
+
 import os
 import time
 import numpy as np
+import atexit
 import platform
 if platform.node() == 'raspberrypi':  # Import real classes.
     from servo import Servo
@@ -15,18 +17,15 @@ else: # This is being run without access to the PiCar-X hardware (not on raspber
     from pin_sim import Pin
     from adc_sim import ADC
     from filedb_sim import fileDB
-
 import logging
 logging.basicConfig(format="%(asctime)s:%(message)s", level=logging.INFO, datefmt="%H:%M:%S")
 logging.getLogger().setLevel(logging.DEBUG)
 from logdecorator import log_on_start,log_on_error,log_on_end
 
-import atexit
-
 
 class Picarx(object):
     PERIOD = 4095
-    PRESCALER = 10  #todo this may be the scaling referred to in the prompt.
+    PRESCALER = 10  #todo this may be the scaling referred to in the assignment prompt?
     TIMEOUT = 0.02
 
     def __init__(self):
@@ -60,7 +59,7 @@ class Picarx(object):
         self.cali_dir_value = [int(i.strip()) for i in self.cali_dir_value.strip("[]").split(",")]
         self.cali_speed_value = [0, 0]
         self.dir_current_angle = 0
-        atexit.register(self.shutdown)
+        atexit.register(self.cleanup)
 
 
     @log_on_start(logging.DEBUG, "[set_motor_speed] motor: {motor}, speed: {speed}")
@@ -255,33 +254,22 @@ class Picarx(object):
         return cm
 
     @log_on_start(logging.DEBUG, "[shutdown] Enter")
-    def shutdown(self):
+    def cleanup(self):
         logging.info("SHUTDOWN ON EXIT. MOTOR SPEEDS SET TO 0.")
         self.stop()
 
 
 def test(px):
-    # def set_motor_speed(self, motor, speed):
     px.set_motor_speed(1, 5)
-    # def motor_speed_calibration(self, value):
-    # px.motor_speed_calibration(10)
-    # def motor_direction_calibration(self, motor, value):
     px.motor_direction_calibration(1,1)
-    # def dir_servo_angle_calibration(self,value):
     px.dir_servo_angle_calibration(1)
-    # def set_dir_servo_angle(self, value):
     px.set_dir_servo_angle(1)
-    # def camera_servo1_angle_calibration(self, value):
     px.camera_servo1_angle_calibration(1)
     px.camera_servo2_angle_calibration(1)
-    # def set_camera_servo1_angle(self, value):
     px.set_camera_servo1_angle(1)
     px.set_camera_servo2_angle(1)
-    # def get_adc_value(self):
     px.get_adc_value()
-    # def set_power(self, speed):
     px.set_power(10)
-    # def backward(self, speed):
     px.backward(10)
     px.forward(10)
     px.stop()
@@ -290,31 +278,9 @@ def test(px):
 
 def main():
     logging.getLogger().setLevel(logging.DEBUG)
-    # logging.getLogger().setLevel(logging.INFO)
-    px = Picarx()
-
-    test(px)
+    if platform.node() != 'raspberrypi':
+        px = Picarx()
+        test(px)
 
 if __name__ == "__main__":
     main()
-
-    # px = Picarx()
-    # px.forward(50)
-    # time.sleep(1)
-    # px.stop()
-    # set_dir_servo_angle(0)
-    # time.sleep(1)
-    # self.set_motor_speed(1, 1)
-    # self.set_motor_speed(2, 1)
-    # camera_servo_pin.angle(0)
-# set_camera_servo1_angle(cam_cal_value_pan)
-# set_camera_servo2_angle(cam_cal_value_tilt)
-# set_dir_servo_angle(dir_cal_value)
-
-# if __name__ == "__main__":
-#     try:
-#         # dir_servo_angle_calibration(-10) 
-#         while 1:
-#             test()
-#     finally: 
-#         stop()
