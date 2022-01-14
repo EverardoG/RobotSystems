@@ -17,15 +17,15 @@ class Picarx(object):
         home_directory = os.path.expanduser(
             '~')  # Home directory changes for simulated Picarx (laptop), vs real (raspi).
         print('here')
-        print(self.config_file_obj.db)
+        # print(self.config_file_obj.db)
 
         self.dir_servo_pin = Servo(PWM('P2'))
         self.camera_servo_pin1 = Servo(PWM('P0'))
         self.camera_servo_pin2 = Servo(PWM('P1'))
         home_directory = os.path.expanduser('~')  # Home directory changes for simulated Picarx (laptop), vs real (raspi).
-        print(self.config_file_obj.db)
-        self.config_file_obj = fileDB(home_directory + '/.config')
-        print(self.config_file_obj.db)
+        # print(self.config_file_obj.db)
+        # self.config_file_obj = fileDB(home_directory + '/.config')
+        # print(self.config_file_obj.db)
         self.dir_cal_value = int(self.config_flie.get("picarx_dir_servo", default_value=0))
         self.cam_cal_value_1 = int(self.config_flie.get("picarx_cam1_servo", default_value=0))
         self.cam_cal_value_2 = int(self.config_flie.get("picarx_cam2_servo", default_value=0))
