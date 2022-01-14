@@ -21,6 +21,7 @@ def cal_steering(px):
                 print("\nInvalid entry. Please enter a number.")
         if error == 0: break
         px.dir_cal_value = px.dir_cal_value + error
+    px.config_file_obj.set("picarx_dir_servo", "%s" % px.dir_cal_value)
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.DEBUG)

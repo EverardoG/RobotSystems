@@ -110,10 +110,11 @@ class Picarx(object):
     @log_on_start(logging.DEBUG, "[dir_servo_angle_calibration] value: {value}")
     @log_on_error(logging.DEBUG, "[dir_servo_angle_calibration] Error")
     def dir_servo_angle_calibration(self,value):
+        """Set the calibration angle."""
         self.dir_cal_value = value
         # print("calibrationdir_cal_value:",self.dir_cal_value)
         self.config_file_obj.set("picarx_dir_servo", "%s"%value)
-        self.servo_dir.angle(value)
+        # self.servo_dir.angle(value)
 
     @log_on_start(logging.DEBUG, "[set_dir_servo_angle] value: {value}")
     @log_on_error(logging.DEBUG, "[set_dir_servo_angle] Error")
