@@ -14,9 +14,10 @@ def cal_steering(px):
             try:
                 error = int(float(input("How many degrees of angle was the steering off? "
                                     "\n(Negative values for left, positive values for right, zero if approx straight)\n> ")))
+                assert abs(error) <= 40
                 break
             except:
-                print("\nInvalid entry. Please enter a number.")
+                print("\nInvalid entry. Please enter a number less than 40.")
         if error == 0: break
         px.dir_cal_value = px.dir_cal_value + error
         angle_calibrated = desired_angle + px.dir_cal_value
