@@ -1,9 +1,9 @@
 import sys
-sys.path.append(r'/home/kyle/picar-x/lib')
+sys.path.append(r'/home/kyle/RobotSystems/picar/lib')
 from utils import reset_mcu
 reset_mcu()
 
-from picarx import Picarx
+from picarx2 import Picarx
 import time
 
 
