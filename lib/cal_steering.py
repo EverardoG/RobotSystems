@@ -21,6 +21,7 @@ def cal_steering(px):
         px.dir_cal_value = px.dir_cal_value + error
         angle_calibrated = desired_angle + px.dir_cal_value
         px.servo_dir.angle(angle_calibrated)
+    print("\nCalibrated 0 degree angle set to: {}".format(px.dir_cal_value))
     px.config_file_obj.set("picarx_dir_servo", "%s" % px.dir_cal_value)
 
 if __name__ == '__main__':
