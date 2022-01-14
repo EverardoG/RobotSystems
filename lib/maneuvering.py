@@ -43,10 +43,10 @@ def three_point_turn(px,direction):
     time.sleep(1.5)
     px.backward(75)
     px.set_dir_servo_angle(dir_modifier * -40)
-    time.sleep(2.5)
+    time.sleep(1.5)
     px.forward(50)
     px.set_dir_servo_angle(0)
-    time.sleep(0.5)
+    time.sleep(1.5)
     px.stop()
 
 def get_dir_response():
