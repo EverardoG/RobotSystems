@@ -53,6 +53,7 @@ def get_dir_response():
         try:
             response = input("Left or right? (l/r)\n> ")
             direction = ans_map[response]
+            break
         except:
             print("\nInvalid entry. Enter l for left or r for right.\n")
     return direction
@@ -68,6 +69,7 @@ def get_action_response():
                              "exit: 4\n"
                              "> ")
             assert response in ans_set
+            break
         except:
             print("\nInvalid entry. Enter 1, 2, 3 or 4.\n")
     return response
@@ -86,6 +88,6 @@ def main():
             direction = get_dir_response()
             three_point_turn(px,direction)
         if action == '4': break
-        
+
 if __name__ == '__main__':
     main()
