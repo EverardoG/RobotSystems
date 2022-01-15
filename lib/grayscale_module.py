@@ -7,7 +7,6 @@ class Grayscale_Module(object):
         self.chn_2 = ADC("A2")
         self.ref = ref
 
-
     def get_line_status(self,fl_list):
 
         if fl_list[0] > self.ref and fl_list[1] > self.ref and fl_list[2] > self.ref:

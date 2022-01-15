@@ -11,7 +11,7 @@ if platform.node() == 'raspberrypi':  # Import real classes.
     from pin import Pin
     from adc import ADC
     from filedb import fileDB
-else: # This is being run without access to the PiCar-X hardware (not on raspberrypi). # Import simulation classes.
+else: # Not being run on the raspberry pi. Import simulation classes.
     from servo_sim import Servo
     from pwm_sim import PWM
     from pin_sim import Pin
