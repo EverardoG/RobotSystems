@@ -5,6 +5,7 @@ import picarx_improved
 import logging
 import time
 import numpy as np
+import atexit
 import line_following_interpreter as interp
 import grayscale_module
 import picarx_improved
@@ -20,6 +21,7 @@ class Controller(object):
         self.pwm_percent = pwm_percent
         self.dir_range = [-1, 1]
         self.steering_angle_range = [-40, 40]
+        atexit.register(self.shutdown)
 
     def follow_line(self):
         self._fill_buffer()
@@ -37,6 +39,9 @@ class Controller(object):
         while not self.interpreter.buffer_full:
             raw_data = self.sensor.get_grayscale_data()
             self.interpreter.get_direction(raw_data)
+
+    def shutdown(self):
+        time.sleep(0.01)
 
 def main():
     logging.getLogger().setLevel(logging.INFO)
