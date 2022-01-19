@@ -27,7 +27,7 @@ class Interpreter(object):
                 self.running_data[i].append(sensor_data[i])
                 del self.running_data[i][0]
                 ave = np.average(self.running_data[i])
-                self.changes[i] = (ave - self.running_aves[i]) * self.moving_ave_num *1000
+                self.changes[i] = (ave - self.running_aves[i]) * self.moving_ave_num
                 self.running_aves[i] = ave
         else:  # Buffer isn't full yet.
             buffer_size = self._add_to_buffer(sensor_data)
@@ -35,7 +35,7 @@ class Interpreter(object):
             return 0  # Return a neutral position until buffer fills.
 
         # Combine the average value and
-        direction = (self.running_aves + self.changes[i]) * self.sensitivity
+        direction = np.add(self.running_aves,self.changes) * self.sensitivity
         direction -= np.min(direction)  # adjust down so the lowest value is zero.
         # 'Vote' on which direction to go.
         direction[0] = direction[0] * -1
