@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """Class to control PiCar-X with simulated classes for offline testing."""
 
 import os

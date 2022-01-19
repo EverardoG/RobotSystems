@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from adc import ADC
 
 class Grayscale_Module(object):

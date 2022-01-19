@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import smbus, math
 from i2c_sim import I2C
 

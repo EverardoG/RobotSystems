@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # from .ble import BLE
 import time
 import os
@@ -5,7 +7,7 @@ import re
 import math
 from pin import Pin
 
-mcu_reset = Pin("MCURST")
+mcu_reset = mcu_reset = Pin("MCURST")
 
 def reset_mcu():
     mcu_reset.off()

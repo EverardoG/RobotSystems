@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # from ezblock import Servo,PWM,fileDB,Pin,ADC
 from servo import Servo 
 from pwm import PWM

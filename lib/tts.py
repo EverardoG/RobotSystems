@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from utils import mapping, is_installed, run_command
 from distutils.spawn import find_executable
 
