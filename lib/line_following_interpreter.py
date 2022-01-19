@@ -34,7 +34,7 @@ class Interpreter(object):
                 self.running_data[i].append(sensor_data[i])
                 del self.running_data[i][0]
                 ave = np.average(self.running_data[i])
-                self.changes[i] = (ave - self.running_aves[i]) * self.moving_ave_num * self.d_gain
+                self.changes[i] = (ave - self.running_aves[i]) * self.moving_ave_num * self.d_gain * self.line_polarity
                 self.running_aves[i] = ave
         else:  # Buffer isn't full yet.
             buffer_size = self._add_to_buffer(sensor_data)
