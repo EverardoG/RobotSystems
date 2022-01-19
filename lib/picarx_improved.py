@@ -20,6 +20,8 @@ else: # Not being run on the raspberry pi. Import simulation classes.
     from pin_sim import Pin
     from adc_sim import ADC
     from filedb_sim import fileDB
+from utils import reset_mcu
+reset_mcu()
 import logging
 logging.basicConfig(format="%(asctime)s:%(message)s", level=logging.INFO, datefmt="%H:%M:%S")
 logging.getLogger().setLevel(logging.DEBUG)
@@ -261,6 +263,7 @@ class Picarx(object):
     def cleanup(self):
         logging.info("SHUTDOWN ON EXIT. MOTOR SPEEDS SET TO 0.")
         self.stop()
+        reset_mcu()
 
 
 def test(px):

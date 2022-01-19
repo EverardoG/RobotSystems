@@ -34,7 +34,6 @@ class Grayscale_Module(object):
         adc_value_list.append(self.chn_2.read())
         return adc_value_list
 
-
 def main():
     import time
     interp = line_following_interpreter.Interpreter()
