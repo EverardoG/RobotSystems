@@ -42,7 +42,7 @@ def main():
     while True:
         print(interp.get_position(GM.get_grayscale_data()))
         # print(GM.get_grayscale_data())
-        # time.sleep(1)
+        time.sleep(.1)
 
 if __name__ == "__main__":
     main()
