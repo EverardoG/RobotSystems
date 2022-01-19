@@ -21,7 +21,7 @@ class Controller(object):
         self.pwm_percent = pwm_percent
         self.dir_range = [-1, 1]
         self.steering_angle_range = [-90, 90]
-        self.move_ave_num = 5
+        self.move_ave_num = 10
         self.dir_vals = [0]*self.move_ave_num
         atexit.register(self.shutdown)
 
@@ -46,11 +46,12 @@ class Controller(object):
             self.interpreter.get_direction(raw_data)
 
     def shutdown(self):
+        self.car.cleanup()
         time.sleep(0.1)
 
 def main():
     logging.getLogger().setLevel(logging.INFO)
-    controller = Controller(proportional_gain=50,derivative_gain=1,line_polarity='darker',pwm_percent = 30)
+    controller = Controller(proportional_gain=100,derivative_gain=1,line_polarity='darker',pwm_percent = 30)
     controller.follow_line()
 
 if __name__ == '__main__':
