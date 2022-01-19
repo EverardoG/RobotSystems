@@ -37,7 +37,7 @@ def main():
     GM = Grayscale_Module(950)
     while True:
         print(GM.get_grayscale_data())
-        time.sleep(1)
+        time.sleep(.1)
 
 if __name__ == "__main__":
     main()
