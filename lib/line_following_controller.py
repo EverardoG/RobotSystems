@@ -13,7 +13,7 @@ reset_mcu()
 
 class Controller(object):
     """Class for controlling the robot in a line following task."""
-    def __init__(self, proportional_gain=50,derivative_gain=5,line_polarity='darker',pwm_percent = 10):
+    def __init__(self, proportional_gain=50,derivative_gain=5,line_polarity='darker',pwm_percent = 30):
         self.interpreter = interp.Interpreter(proportional_gain=proportional_gain,derivative_gain=derivative_gain,line_polarity=line_polarity)
         self.sensor = grayscale_module.Grayscale_Module(950)
         self.car = picarx_improved.Picarx()
@@ -31,7 +31,6 @@ class Controller(object):
             print(goal_steering_angle)
             self.car.set_dir_servo_angle(goal_steering_angle)
             self.car.forward(self.pwm_percent)
-            # time.sleep(.1)
 
     def _fill_buffer(self):
         """Sensor needs to fill a buffer before starting to move."""
@@ -41,7 +40,7 @@ class Controller(object):
 
 def main():
     logging.getLogger().setLevel(logging.INFO)
-    controller = Controller(proportional_gain=50,derivative_gain=.5,line_polarity='darker',pwm_percent = 10)
+    controller = Controller(proportional_gain=50,derivative_gain=.5,line_polarity='darker',pwm_percent = 30)
     controller.follow_line()
 
 if __name__ == '__main__':
