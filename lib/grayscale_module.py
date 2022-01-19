@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from adc import ADC
+from utils import reset_mcu
+reset_mcu()
 
 class Grayscale_Module(object):
     def __init__(self,ref = 1000):
