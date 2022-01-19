@@ -41,8 +41,8 @@ def main():
     GM = Grayscale_Module(950)
     while True:
         print(interp.get_position(GM.get_grayscale_data()))
-        print(GM.get_grayscale_data())
-        time.sleep(1)
+        # print(GM.get_grayscale_data())
+        # time.sleep(1)
 
 if __name__ == "__main__":
     main()
