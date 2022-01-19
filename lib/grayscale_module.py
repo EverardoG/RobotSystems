@@ -31,9 +31,13 @@ class Grayscale_Module(object):
         adc_value_list.append(self.chn_2.read())
         return adc_value_list
 
-if __name__ == "__main__":
+
+def main():
     import time
     GM = Grayscale_Module(950)
     while True:
         print(GM.get_grayscale_data())
         time.sleep(1)
+
+if __name__ == "__main__":
+    main()
