@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 # from ezblock import Servo,PWM,fileDB,Pin,ADC
 from servo import Servo 

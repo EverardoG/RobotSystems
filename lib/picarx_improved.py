@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 """Class to control PiCar-X with simulated classes for offline testing."""
 
