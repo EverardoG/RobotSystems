@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # from .basic import _Basic_class
 import RPi.GPIO as GPIO
 
