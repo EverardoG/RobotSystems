@@ -37,7 +37,7 @@ class Controller(object):
         """Sensor needs to fill a buffer before starting to move."""
         while not self.interpreter.buffer_full:
             raw_data = self.sensor.get_grayscale_data()
-            interp.get_direction(raw_data)
+            self.interp.get_direction(raw_data)
 
 def main():
     controller = Controller(proportional_gain=50,derivative_gain=5,line_polarity='darker',pwm_percent = 10)
