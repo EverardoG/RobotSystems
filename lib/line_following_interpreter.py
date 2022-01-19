@@ -41,7 +41,8 @@ class Interpreter(object):
             if buffer_size == self.moving_ave_num: self.buffer_full = True
             return 0  # Return a neutral position until buffer fills.
 
-        direction = np.add(self.running_aves,self.changes) * self.p_gain
+        self.running_aves = self.running_aves * self.p_gain
+        direction = np.add(self.running_aves,self.changes)
         direction -= np.min(direction)  # adjust down so the lowest value is zero.
         # 'Vote' on which direction to go.
         direction[0] = direction[0] * -1
