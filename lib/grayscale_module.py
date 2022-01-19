@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from adc import ADC
-import interpreter
+# import interpreter
 
 class Grayscale_Module(object):
     def __init__(self,ref = 1000):
@@ -35,10 +35,11 @@ class Grayscale_Module(object):
 
 def main():
     import time
-    interp = interpreter.Interpreter()
+    # interp = interpreter.Interpreter()
     GM = Grayscale_Module(950)
     while True:
-        print(interp.get_position(GM.get_grayscale_data()))
+        # print(interp.get_position(GM.get_grayscale_data()))
+        print(GM.get_grayscale_data())
         time.sleep(1)
 
 if __name__ == "__main__":
