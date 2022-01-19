@@ -1,18 +1,18 @@
 import sys
 import os
 picarx_lib_path = os.getcwd().replace('picar_orig_examples', 'lib')
-print(picarx_lib_path)
 sys.path.append(picarx_lib_path)  # Path to dynamixel sdk package.
 from utils import reset_mcu
 reset_mcu()
 from grayscale_module import Grayscale_Module
-import picarx_improved
+from picarx import Picarx
+
 
 
 if __name__=='__main__':
   try:
     gm = Grayscale_Module(500)
-    px = picarx_improved.Picarx()
+    px = Picarx()
     px_power = 10
     while True:
         gm_val_list = gm.get_grayscale_data()

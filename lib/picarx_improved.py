@@ -62,6 +62,7 @@ class Picarx(object):
         atexit.register(self.cleanup)
 
 
+
     @log_on_start(logging.DEBUG, "[set_motor_speed] motor: {motor}, speed: {speed}")
     @log_on_error(logging.DEBUG, "[set_motor_speed] Error")
     def set_motor_speed(self,motor,speed):
