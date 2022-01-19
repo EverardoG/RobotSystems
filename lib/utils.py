@@ -5,7 +5,7 @@ import re
 import math
 from pin import Pin
 
-mcu_reset = mcu_reset = Pin("MCURST")
+mcu_reset = Pin("MCURST")
 
 def reset_mcu():
     mcu_reset.off()
