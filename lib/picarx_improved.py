@@ -20,8 +20,8 @@ else: # Not being run on the raspberry pi. Import simulation classes.
     from pin_sim import Pin
     from adc_sim import ADC
     from filedb_sim import fileDB
-from utils import reset_mcu
-reset_mcu()
+# from utils import reset_mcu
+# reset_mcu()
 import logging
 logging.basicConfig(format="%(asctime)s:%(message)s", level=logging.INFO, datefmt="%H:%M:%S")
 logging.getLogger().setLevel(logging.DEBUG)
