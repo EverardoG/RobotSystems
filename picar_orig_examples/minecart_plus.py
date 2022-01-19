@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import sys
 import os
 picarx_lib_path = os.getcwd().replace('picar_orig_examples', 'lib')
