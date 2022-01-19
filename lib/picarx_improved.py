@@ -263,7 +263,7 @@ class Picarx(object):
     def cleanup(self):
         logging.info("SHUTDOWN ON EXIT. MOTOR SPEEDS SET TO 0.")
         self.stop()
-        reset_mcu()
+        time.sleep(0.1)
 
 
 def test(px):
