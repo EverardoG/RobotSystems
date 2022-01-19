@@ -17,7 +17,7 @@ class Interpreter(object):
         self.running_data = [ [], [], [] ]
         self.running_aves = [0,0,0]
         self.changes = [0,0,0]
-        self.moving_ave_num = 10
+        self.moving_ave_num = 3
         self.buffer_full = False
 
     def reset(self):
