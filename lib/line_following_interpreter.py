@@ -20,7 +20,13 @@ class Interpreter(object):
         self.moving_ave_num = 10
         self.buffer_full = False
 
-    def get_position(self, sensor_data):
+    def reset(self):
+        self.running_data = [ [], [], [] ]
+        self.running_aves = [0,0,0]
+        self.changes = [0,0,0]
+        self.buffer_full = False
+
+    def get_direction(self, sensor_data):
         """Interprets the sensor data and returns the discrete position of the robot. sensor_data argument is a list
         of length 3. Returns -1, 0, or 1 for if the robot is to the left, center, or right of the line."""
         if self.buffer_full:
@@ -35,7 +41,6 @@ class Interpreter(object):
             if buffer_size == self.moving_ave_num: self.buffer_full = True
             return 0  # Return a neutral position until buffer fills.
 
-        # Combine the average value and
         direction = np.add(self.running_aves,self.changes) * self.p_gain
         direction -= np.min(direction)  # adjust down so the lowest value is zero.
         # 'Vote' on which direction to go.
@@ -64,7 +69,7 @@ def test():
             [190, 227, 207],[187, 230, 210],[185, 227, 210]]
     interpreter = Interpreter()
     for i in range(len(data)):
-        print(interpreter.get_position(data[i]))
+        print(interpreter.get_direction(data[i]))
 
 
 
