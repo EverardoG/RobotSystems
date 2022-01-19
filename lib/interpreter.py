@@ -16,7 +16,7 @@ class Interpreter(object):
         self.running_data = [ [], [], [] ]
         self.running_aves = [0,0,0]
         self.changes = [0,0,0]
-        self.moving_ave_num = 2
+        self.moving_ave_num = 5
         self.buffer_full = False
 
     def get_position(self, sensor_data):
@@ -27,7 +27,8 @@ class Interpreter(object):
                 self.running_data[i].append(sensor_data[i])
                 del self.running_data[i][0]
                 ave = np.average(self.running_data[i])
-                self.changes[i] = (ave - self.running_aves) * self.moving_ave_num
+                self.changes[i] = (ave - self.running_aves[i]) * self.moving_ave_num
+                self.running_aves[i] = ave
         else:  # Buffer isn't full yet.
             buffer_size = self._add_to_buffer(sensor_data)
             if buffer_size == self.moving_ave_num: self.buffer_full = True
