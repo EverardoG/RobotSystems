@@ -39,12 +39,9 @@ class Controller(object):
             raw_data = self.sensor.get_grayscale_data()
             interp.get_direction(raw_data)
 
-def test():
-    pass
-
 def main():
-    logging.getLogger().setLevel(logging.INFO)
-    test()
+    controller = Controller(proportional_gain=50,derivative_gain=5,line_polarity='darker',pwm_percent = 10)
+    controller.follow_line()
 
 if __name__ == '__main__':
     main()
