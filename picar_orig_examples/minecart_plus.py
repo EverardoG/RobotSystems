@@ -1,7 +1,6 @@
 import sys
 import os
 picarx_lib_path = os.getcwd().replace('picar_orig_examples', 'lib')
-print(picarx_lib_path)
 sys.path.append(picarx_lib_path)  # Path to dynamixel sdk package.
 from utils import reset_mcu
 reset_mcu()

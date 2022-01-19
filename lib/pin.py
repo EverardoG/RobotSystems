@@ -70,7 +70,7 @@ class Pin(object):
     }
 
     def __init__(self, *value):
-        super().__init__()
+        super(object, self).__init__()
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
 
