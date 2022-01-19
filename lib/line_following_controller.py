@@ -31,7 +31,7 @@ class Controller(object):
             print(goal_steering_angle)
             self.car.set_dir_servo_angle(goal_steering_angle)
             self.car.forward(self.pwm_percent)
-            time.sleep(.1)
+            # time.sleep(.1)
 
     def _fill_buffer(self):
         """Sensor needs to fill a buffer before starting to move."""
