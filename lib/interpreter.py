@@ -9,10 +9,11 @@ import numpy as np
 class Interpreter(object):
     """Class for interpreting the grayscale sensor data into a discrete position."""
 
-    def __init__(self, sensitivity=50, line_polarity='darker'):
+    def __init__(self, proportional_gain=50,derivative_gain=1, line_polarity='darker'):
         polarity_map = {'darker':1,'lighter':-1}
         self.line_polarity = polarity_map[line_polarity]
-        self.sensitivity = sensitivity / 50000
+        self.p_gain = proportional_gain / 50000
+        self.d_gain = derivative_gain
         self.running_data = [ [], [], [] ]
         self.running_aves = [0,0,0]
         self.changes = [0,0,0]
@@ -27,7 +28,7 @@ class Interpreter(object):
                 self.running_data[i].append(sensor_data[i])
                 del self.running_data[i][0]
                 ave = np.average(self.running_data[i])
-                self.changes[i] = (ave - self.running_aves[i]) * self.moving_ave_num
+                self.changes[i] = (ave - self.running_aves[i]) * self.moving_ave_num * self.d_gain
                 self.running_aves[i] = ave
         else:  # Buffer isn't full yet.
             buffer_size = self._add_to_buffer(sensor_data)
@@ -35,7 +36,7 @@ class Interpreter(object):
             return 0  # Return a neutral position until buffer fills.
 
         # Combine the average value and
-        direction = np.add(self.running_aves,self.changes) * self.sensitivity
+        direction = np.add(self.running_aves,self.changes) * self.p_gain
         direction -= np.min(direction)  # adjust down so the lowest value is zero.
         # 'Vote' on which direction to go.
         direction[0] = direction[0] * -1
