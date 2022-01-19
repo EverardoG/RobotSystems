@@ -9,7 +9,7 @@ import numpy as np
 class Interpreter(object):
     """Class for interpreting the grayscale sensor data into a discrete position."""
 
-    def __init__(self, proportional_gain=50,derivative_gain=1, line_polarity='darker'):
+    def __init__(self, proportional_gain=50,derivative_gain=5, line_polarity='darker'):
         polarity_map = {'darker':1,'lighter':-1}
         self.line_polarity = polarity_map[line_polarity]
         self.p_gain = proportional_gain / 50000
