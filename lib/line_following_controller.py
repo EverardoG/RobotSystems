@@ -26,7 +26,7 @@ class Controller(object):
         while True:
             raw_data = self.sensor.get_grayscale_data()
             print(raw_data)
-            direction = self.interp.get_direction(raw_data)
+            direction = self.interpreter.get_direction(raw_data)
             goal_steering_angle = np.interp(direction,self.dir_range,self.steering_angle_range)
             print(goal_steering_angle)
             self.car.set_dir_servo_angle(goal_steering_angle)
@@ -37,7 +37,7 @@ class Controller(object):
         """Sensor needs to fill a buffer before starting to move."""
         while not self.interpreter.buffer_full:
             raw_data = self.sensor.get_grayscale_data()
-            self.interp.get_direction(raw_data)
+            self.interpreter.get_direction(raw_data)
 
 def main():
     controller = Controller(proportional_gain=50,derivative_gain=5,line_polarity='darker',pwm_percent = 10)
