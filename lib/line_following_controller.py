@@ -21,6 +21,8 @@ class Controller(object):
         self.pwm_percent = pwm_percent
         self.dir_range = [-1, 1]
         self.steering_angle_range = [-40, 40]
+        self.move_ave_num = 5
+        self.dir_vals = [0]*self.move_ave_num
         atexit.register(self.shutdown)
 
     def follow_line(self):
@@ -30,6 +32,9 @@ class Controller(object):
             print(raw_data)
             direction = self.interpreter.get_direction(raw_data)
             goal_steering_angle = np.interp(direction,self.dir_range,self.steering_angle_range)
+            self.dir_vals.append(goal_steering_angle)
+            del self.dir_vals[0]
+            goal_steering_angle = np.average(self.dir_vals)
             print(goal_steering_angle)
             self.car.set_dir_servo_angle(goal_steering_angle)
             self.car.forward(self.pwm_percent)
@@ -45,7 +50,7 @@ class Controller(object):
 
 def main():
     logging.getLogger().setLevel(logging.INFO)
-    controller = Controller(proportional_gain=500,derivative_gain=.5,line_polarity='darker',pwm_percent = 30)
+    controller = Controller(proportional_gain=500,derivative_gain=5,line_polarity='darker',pwm_percent = 30)
     controller.follow_line()
 
 if __name__ == '__main__':
