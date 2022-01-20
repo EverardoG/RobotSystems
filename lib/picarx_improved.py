@@ -124,6 +124,8 @@ class Picarx(object):
     @log_on_start(logging.DEBUG, "[set_dir_servo_angle] value: {value}")
     @log_on_error(logging.DEBUG, "[set_dir_servo_angle] Error")
     def set_dir_servo_angle(self,value):
+        if value < -40: value = -40
+        if value > 40: value = 40
         self.dir_current_angle = value
         angle_value  = value + self.dir_cal_value
         # print("angle_value:",angle_value)
