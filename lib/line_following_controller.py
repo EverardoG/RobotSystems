@@ -12,9 +12,10 @@ import picarx_improved
 from utils import reset_mcu
 reset_mcu()
 
-class Controller(object):
+class Controller(picarx_improved.Picarx):
     """Class for controlling the robot in a line following task."""
     def __init__(self, proportional_gain=50,derivative_gain=5,line_polarity='darker',pwm_percent = 30):
+        super().__init__()
         self.interpreter = interp.Interpreter(proportional_gain=proportional_gain,derivative_gain=derivative_gain,line_polarity=line_polarity)
         self.sensor = grayscale_module.Grayscale_Module(950)
         self.car = picarx_improved.Picarx()
@@ -25,17 +26,22 @@ class Controller(object):
         self.dir_vals = [0]*self.move_ave_num
         atexit.register(self.shutdown)
 
+    def _get_steering_angle(self,direction):
+        """Takes the "direction" from the interpreter and returns a steering angle for the car."""
+        return np.interp(direction, self.dir_range, self.steering_angle_range)
+
     def follow_line(self):
         self._fill_buffer()
         while True:
             raw_data = self.sensor.get_grayscale_data()
             print(raw_data)
             direction = self.interpreter.get_direction(raw_data)
-            goal_steering_angle = np.interp(direction,self.dir_range,self.steering_angle_range)
+            goal_steering_angle = self._get_steering_angle(direction)
+            # add steering angle to a FIFO queue, and take average to smooth out commands.
             self.dir_vals.append(goal_steering_angle)
             del self.dir_vals[0]
             goal_steering_angle = np.average(self.dir_vals)
-            print(goal_steering_angle)
+            logging.DEBUG("goal_steering_angle".format(goal_steering_angle))
             self.car.set_dir_servo_angle(goal_steering_angle)
             self.car.forward(self.pwm_percent)
 
@@ -50,8 +56,8 @@ class Controller(object):
 
 def main():
     logging.getLogger().setLevel(logging.INFO)
-    controller = Controller(proportional_gain=10,derivative_gain=1,line_polarity='darker',pwm_percent = 30)
-    controller.follow_line()
+    car = Controller(proportional_gain=10,derivative_gain=1,line_polarity='darker',pwm_percent = 30)
+    car.follow_line()
 
 if __name__ == '__main__':
     main()
