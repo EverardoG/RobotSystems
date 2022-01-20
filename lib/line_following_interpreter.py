@@ -10,7 +10,7 @@ class Interpreter(object):
     """Class for interpreting the grayscale sensor data into a discrete position. Higher sensor numbers are lighter,
     lower numbers are darker."""
 
-    def __init__(self, proportional_gain=50,derivative_gain=5, line_polarity='darker'):
+    def __init__(self, proportional_gain=50,derivative_gain=5, line_polarity='lighter'):
         polarity_map = {'darker':1,'lighter':-1}
         self.line_polarity = polarity_map[line_polarity]
         if line_polarity == 'darker': self.mostly_under_func = np.argmin
@@ -52,7 +52,7 @@ class Interpreter(object):
                  changing in the right direction. Don't need to turn into the center even more. 
                 """
                 change = ave - self.running_aves[i]
-                self.deriv_vals[i] = change * self.d_gain * self.line_polarity
+                self.deriv_vals[i] = change * self.d_gain * self.line_polarity *-1
                 self.running_aves[i] = ave
             # negative deriv_vals are changing to be more like the target.
             if not self.line_centered and self.deriv_vals[mostly_under] > 0 and self.deriv_vals[1] > -self.deriv_vals[mostly_under]/4:
@@ -66,6 +66,7 @@ class Interpreter(object):
         self.prop_vals = [x*self.line_polarity*self.p_gain for x in self.running_aves]
         # adjust down so the lowest value is zero. This makes the proportional value robust to different lighting conditions.
         self.prop_vals = self.prop_vals - np.min(self.prop_vals)
+        self.prop_vals = np.flip(self.prop_vals)
         # add the proportional and derivative terms to get a reference direction.
         direction = np.add(self.prop_vals,self.deriv_vals)
         # Transform the direction vector into a single value from -1 to 1
