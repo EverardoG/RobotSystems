@@ -21,7 +21,7 @@ class Controller(object):
         self.pwm_percent = pwm_percent
         self.dir_range = [-1, 1]
         self.steering_angle_range = [-90, 90]
-        self.move_ave_num = 10
+        self.move_ave_num = 1
         self.dir_vals = [0]*self.move_ave_num
         atexit.register(self.shutdown)
 
