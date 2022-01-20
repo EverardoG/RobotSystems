@@ -15,8 +15,8 @@ class Interpreter(object):
         self.line_polarity = polarity_map[line_polarity]
         if line_polarity == 'darker': self.mostly_under_func = np.argmin
         else: self.mostly_under_func = np.argmax
-        self.p_gain = proportional_gain / 50000
-        self.d_gain = derivative_gain / 5000
+        self.p_gain = proportional_gain / 5000
+        self.d_gain = derivative_gain / 500
         self.running_data = [ [], [], [] ]
         self.running_aves = [0,0,0]
         self.deriv_vals = [0,0,0]
