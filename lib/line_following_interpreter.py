@@ -21,7 +21,7 @@ class Interpreter(object):
         self.running_aves = [0,0,0]
         self.deriv_vals = [0,0,0]
         self.prop_vals = [0,0,0]
-        self.moving_ave_num = 10
+        self.moving_ave_num = 2
         self.buffer_full = False
         self.line_centered = True
 
