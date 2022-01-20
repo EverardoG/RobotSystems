@@ -54,6 +54,7 @@ class Picarx(object):
         self.S0 = ADC('A0')
         self.S1 = ADC('A1')
         self.S2 = ADC('A2')
+        self.turn_limit = 30
 
         self.motor_direction_pins = [self.left_rear_dir_pin, self.right_rear_dir_pin]
         self.motor_speed_pins = [self.left_rear_pwm_pin, self.right_rear_pwm_pin]
@@ -124,8 +125,8 @@ class Picarx(object):
     @log_on_start(logging.DEBUG, "[set_dir_servo_angle] value: {value}")
     @log_on_error(logging.DEBUG, "[set_dir_servo_angle] Error")
     def set_dir_servo_angle(self,value):
-        if value < -40: value = -40
-        if value > 40: value = 40
+        if value < -self.turn_limit: value = -self.turn_limit
+        if value > self.turn_limit: value = self.turn_limit
         self.dir_current_angle = value
         angle_value  = value + self.dir_cal_value
         # print("angle_value:",angle_value)
