@@ -50,7 +50,7 @@ class Controller(object):
 
 def main():
     logging.getLogger().setLevel(logging.INFO)
-    controller = Controller(proportional_gain=12,derivative_gain=3,line_polarity='darker',pwm_percent = 40)
+    controller = Controller(proportional_gain=7,derivative_gain=5,line_polarity='darker',pwm_percent = 40)
     controller.follow_line()
 
 if __name__ == '__main__':
