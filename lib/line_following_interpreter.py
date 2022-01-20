@@ -11,7 +11,7 @@ class Interpreter(object):
     lower numbers are darker."""
 
     def __init__(self, proportional_gain=50,derivative_gain=5, line_polarity='darker'):
-        polarity_map = {'darker':-1,'lighter':1}
+        polarity_map = {'darker':1,'lighter':-1}
         self.line_polarity = polarity_map[line_polarity]
         if line_polarity == 'darker': self.mostly_under_func = np.argmin
         else: self.mostly_under_func = np.argmax
