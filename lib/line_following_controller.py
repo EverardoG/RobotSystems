@@ -41,7 +41,7 @@ class Controller(picarx_improved.Picarx):
             self.dir_vals.append(goal_steering_angle)
             del self.dir_vals[0]
             goal_steering_angle = np.average(self.dir_vals)
-            logging.DEBUG("goal_steering_angle".format(goal_steering_angle))
+            logging.DEBUG("goal_steering_angle: {}".format(goal_steering_angle))
             self.car.set_dir_servo_angle(goal_steering_angle)
             self.car.forward(self.pwm_percent)
 
