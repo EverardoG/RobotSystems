@@ -5,6 +5,10 @@ from adc import ADC
 import line_following_interpreter
 from utils import reset_mcu
 reset_mcu()
+import logging
+logging.basicConfig(format="%(asctime)s:%(message)s", level=logging.INFO, datefmt="%H:%M:%S")
+logging.getLogger().setLevel(logging.DEBUG)
+from logdecorator import log_on_start,log_on_error,log_on_end
 
 class Grayscale_Module(object):
     def __init__(self,ref = 1000):
@@ -27,6 +31,7 @@ class Grayscale_Module(object):
         elif fl_list[2] <= self.ref:
             return 'left'
 
+    @log_on_end(logging.DEBUG, "[adc_value_list] greyscale sensor reading: {adc_value_list}")
     def get_grayscale_data(self):
         adc_value_list = []
         adc_value_list.append(self.chn_0.read())

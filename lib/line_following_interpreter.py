@@ -5,6 +5,10 @@ import picarx_improved
 import logging
 import time
 import numpy as np
+import logging
+logging.basicConfig(format="%(asctime)s:%(message)s", level=logging.INFO, datefmt="%H:%M:%S")
+logging.getLogger().setLevel(logging.DEBUG)
+from logdecorator import log_on_start,log_on_error,log_on_end
 
 class Interpreter(object):
     """Class for interpreting the grayscale sensor data into a discrete position. Higher sensor numbers are lighter,
@@ -31,6 +35,7 @@ class Interpreter(object):
         self.deriv_vals = [0,0,0]
         self.buffer_full = False
 
+    @log_on_end(logging.DEBUG, "[get_direction] steering angle: {direction}")
     def get_direction(self, sensor_data):
         """Interprets the sensor data and returns the discrete position of the robot. sensor_data argument is a list
         of length 3. Returns -1, 0, or 1 for if the robot is to the left, center, or right of the line."""
@@ -61,7 +66,8 @@ class Interpreter(object):
         else:  # Buffer isn't full yet.
             buffer_size = self._add_to_buffer(sensor_data)
             if buffer_size == self.moving_ave_num: self.buffer_full = True
-            return 0  # Return a neutral position until buffer fills.
+            direction = 0
+            return direction  # Return a neutral position until buffer fills.
 
         self.prop_vals = [x*self.line_polarity*self.p_gain for x in self.running_aves]
         # adjust down so the lowest value is zero. This makes the proportional value robust to different lighting conditions.

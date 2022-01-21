@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import picarx_improved
-import logging
 import time
 import numpy as np
 import atexit
@@ -11,6 +10,10 @@ import grayscale_module
 import picarx_improved
 from utils import reset_mcu
 reset_mcu()
+import logging
+logging.basicConfig(format="%(asctime)s:%(message)s", level=logging.INFO, datefmt="%H:%M:%S")
+logging.getLogger().setLevel(logging.DEBUG)
+from logdecorator import log_on_start,log_on_error,log_on_end
 
 class Controller(picarx_improved.Picarx):
     """Class for controlling the robot in a line following task."""
@@ -26,22 +29,24 @@ class Controller(picarx_improved.Picarx):
         self.dir_vals = [0]*self.move_ave_num
         atexit.register(self.shutdown)
 
+    @log_on_end(logging.DEBUG, "[_get_steering_angle] steering angle: {steering_angle}")
     def _get_steering_angle(self,direction):
         """Takes the "direction" from the interpreter and returns a steering angle for the car."""
-        return np.interp(direction, self.dir_range, self.steering_angle_range)
+        steering_angle = np.interp(direction, self.dir_range, self.steering_angle_range)
+        return steering_angle
 
+    @log_on_start(logging.DEBUG, "[set_motor_speed] motor: {motor}, speed: {speed}")
+    @log_on_end(logging.DEBUG, "[_get_steering_angle] steering angle: {steering_angle}")
     def follow_line(self):
         self._fill_buffer()
         while True:
             raw_data = self.sensor.get_grayscale_data()
-            print(raw_data)
             direction = self.interpreter.get_direction(raw_data)
             goal_steering_angle = self._get_steering_angle(direction)
             # add steering angle to a FIFO queue, and take average to smooth out commands.
             self.dir_vals.append(goal_steering_angle)
             del self.dir_vals[0]
             goal_steering_angle = np.average(self.dir_vals)
-            logging.DEBUG("goal_steering_angle: {}".format(goal_steering_angle))
             self.car.set_dir_servo_angle(goal_steering_angle)
             self.car.forward(self.pwm_percent)
 
@@ -55,7 +60,7 @@ class Controller(picarx_improved.Picarx):
         self.car.stop()
 
 def main():
-    logging.getLogger().setLevel(logging.INFO)
+    logging.getLogger().setLevel(logging.DEBUG)
     car = Controller(proportional_gain=10,derivative_gain=1,line_polarity='darker',pwm_percent = 30)
     car.follow_line()
 
