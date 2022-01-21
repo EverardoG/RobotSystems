@@ -31,7 +31,7 @@ class Grayscale_Module(object):
         elif fl_list[2] <= self.ref:
             return 'left'
 
-    @log_on_end(logging.DEBUG, "[get_grayscale_data] greyscale sensor reading: {adc_value_list[0]}")
+    @log_on_end(logging.DEBUG, "[get_grayscale_data]")
     def get_grayscale_data(self):
         adc_value_list = []
         adc_value_list.append(self.chn_0.read())
