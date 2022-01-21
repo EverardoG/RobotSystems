@@ -35,7 +35,6 @@ class Interpreter(object):
         self.deriv_vals = [0,0,0]
         self.buffer_full = False
 
-    @log_on_end(logging.DEBUG, "[get_direction] steering angle: {direction}")
     def get_direction(self, sensor_data):
         """Interprets the sensor data and returns the discrete position of the robot. sensor_data argument is a list
         of length 3. Returns -1, 0, or 1 for if the robot is to the left, center, or right of the line."""

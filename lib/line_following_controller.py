@@ -29,7 +29,6 @@ class Controller(picarx_improved.Picarx):
         self.dir_vals = [0]*self.move_ave_num
         atexit.register(self.shutdown)
 
-    @log_on_end(logging.DEBUG, "[_get_steering_angle] steering angle: {steering_angle}")
     def _get_steering_angle(self,direction):
         """Takes the "direction" from the interpreter and returns a steering angle for the car."""
         steering_angle = np.interp(direction, self.dir_range, self.steering_angle_range)
