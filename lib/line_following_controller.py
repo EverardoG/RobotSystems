@@ -35,8 +35,6 @@ class Controller(picarx_improved.Picarx):
         steering_angle = np.interp(direction, self.dir_range, self.steering_angle_range)
         return steering_angle
 
-    @log_on_start(logging.DEBUG, "[set_motor_speed] motor: {motor}, speed: {speed}")
-    @log_on_end(logging.DEBUG, "[_get_steering_angle] steering angle: {steering_angle}")
     def follow_line(self):
         self._fill_buffer()
         while True:
