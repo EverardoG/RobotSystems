@@ -169,7 +169,7 @@ def average_slope_intercept(frame, line_segments):
     for line_segment in line_segments:
         for x1, y1, x2, y2 in line_segment:
             if x1 == x2:
-                logging.info('skipping vertical line segment (slope=inf): %s' % line_segment)
+                logging.debug('skipping vertical line segment (slope=inf): %s' % line_segment)
                 continue
             fit = np.polyfit((x1, x2), (y1, y2), 1)
             slope = fit[0]
@@ -244,7 +244,7 @@ def stabilize_steering_angle(curr_steering_angle, new_steering_angle, num_of_lan
                                         + max_angle_deviation * angle_deviation / abs(angle_deviation))
     else:
         stabilized_steering_angle = new_steering_angle
-    logging.info('Proposed angle: %s, stabilized angle: %s' % (new_steering_angle, stabilized_steering_angle))
+    logging.debug('Proposed angle: %s, stabilized angle: %s' % (new_steering_angle, stabilized_steering_angle))
     return stabilized_steering_angle
 
 
