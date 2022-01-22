@@ -353,7 +353,7 @@ def test_video(video_file):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    logging.getLogger().setLevel(logging.info)
+    logging.getLogger().setLevel(logging.INFO)
     # init camera
     logging.info("Start lane following.\n")
     camera = PiCamera()
