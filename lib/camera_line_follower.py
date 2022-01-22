@@ -56,7 +56,7 @@ class Controller(picarx_improved.Picarx):
             if k == 27:
                 self.camera.close()
                 break
-            goal_steering_angle = self.lane_follower.curr_steering_angle
+            goal_steering_angle = self.lane_follower.curr_steering_angle - 90
             self.car.set_dir_servo_angle(goal_steering_angle)
             self.car.forward(self.pwm_percent)
 
