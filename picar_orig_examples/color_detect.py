@@ -58,9 +58,13 @@ def color_detect(img,color_name):
 #init camera
 print("start color detect")
 camera = PiCamera()
+print("start color detect2")
 camera.resolution = (640,480)
+print("start color detect3")
 camera.framerate = 24
-rawCapture = PiRGBArray(camera, size=camera.resolution)  
+print("start color detect4")
+rawCapture = PiRGBArray(camera, size=camera.resolution)
+print("start color detect5")
 
 
 for frame in camera.capture_continuous(rawCapture, format="bgr",use_video_port=True):# use_video_port=True
