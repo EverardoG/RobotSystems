@@ -57,7 +57,7 @@ class Controller(picarx_improved.Picarx):
         self.car.stop()
 
 def main():
-    logging.getLogger().setLevel(logging.DEBUG)
+    logging.getLogger().setLevel(logging.debug)
     car = Controller(proportional_gain=10,derivative_gain=1,line_polarity='darker',pwm_percent = 30)
     car.follow_line()
 

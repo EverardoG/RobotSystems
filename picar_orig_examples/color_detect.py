@@ -1,10 +1,20 @@
 #!/usr/bin/env python3
 
 # coding=utf-8
+import numpy as np
+import sys
+import os
+picarx_lib_path = os.getcwd().replace('picar_orig_examples', 'lib')
+sys.path.append(picarx_lib_path)  # Path to dynamixel sdk package.
+from utils import reset_mcu
+reset_mcu()
 import cv2
 from picamera.array import PiRGBArray
 from picamera import PiCamera
-import numpy as np
+from grayscale_module import Grayscale_Module
+import picarx_improved
+
+
 
 color_dict = {'red':[0,4],'orange':[5,18],'yellow':[22,37],'green':[42,85],'blue':[92,110],'purple':[115,165],'red_2':[165,180]}  #Here is the range of H in the HSV color space represented by the color
 
