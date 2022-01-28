@@ -26,7 +26,6 @@ class Controller(picarx_improved.Picarx):
         self.steering_angle_range = [-90, 90]  # Range is larger than actual range of motion to allow for more responsiveness.
         self.move_ave_num = 1
         self.dir_vals = [0]*self.move_ave_num  # Queue used to smooth out direction commands.
-        self._fill_buffer()
         atexit.register(self.shutdown)
 
     def _get_steering_angle(self,direction):
