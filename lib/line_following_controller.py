@@ -55,7 +55,7 @@ class Controller(picarx_improved.Picarx):
         self.car.stop()
 
 def main():
-    logging.getLogger().setLevel(logging.debug)
+    logging.getLogger().setLevel(logging.DEBUG)
 
     interpreter = interp.Interpreter(proportional_gain=10,derivative_gain=1,line_polarity='darker')
     sensor = grayscale_module.Grayscale_Module(950)
