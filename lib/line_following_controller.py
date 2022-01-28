@@ -45,11 +45,11 @@ class Controller(picarx_improved.Picarx):
         self.car.forward(self.pwm_percent)
         return goal_steering_angle
 
-    def _fill_buffer(self):
+    def fill_buffer(self,interpreter,sensor):
         """Sensor needs to fill a buffer before starting to move."""
-        while not self.interpreter.buffer_full:
-            raw_data = self.sensor.get_grayscale_data()
-            self.interpreter.get_direction(raw_data)
+        while not interpreter.buffer_full:
+            raw_data = sensor.get_grayscale_data()
+            interpreter.get_direction(raw_data)
 
     def shutdown(self):
         self.car.stop()
@@ -61,6 +61,7 @@ def main():
     sensor = grayscale_module.Grayscale_Module(950)
     car = picarx_improved.Picarx()
     controller = Controller(car,pwm_percent = 30)
+    controller.fill_buffer(interpreter, sensor)
     while True:
         raw_data = sensor.get_grayscale_data()
         direction = interpreter.get_direction(raw_data)
