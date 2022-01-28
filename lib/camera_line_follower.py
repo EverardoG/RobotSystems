@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""Uses the picarx camera as a sensor to follow lines forever. Adopted from line_following_controller.py and still includes
+unnecessary variables from that script. """
+
 import picarx_improved
 import time
 import numpy as np

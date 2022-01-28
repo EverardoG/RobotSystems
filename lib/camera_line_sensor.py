@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
-
 # coding=utf-8
+
+"""Includes a line follower class that uses the picarx camera as a sensor and interprets the picture to determine a
+steering direction. This code is adopted and modified from
+https://github.com/dctian/DeepPiCar/blob/master/driver/code/hand_coded_lane_follower.py"""
+
 import sys
 import os
 picarx_lib_path = os.getcwd().replace('picar_orig_examples', 'lib')
@@ -373,4 +377,3 @@ if __name__ == '__main__':
         if k == 27:
             camera.close()
             break
-        lane_follower.curr_steering_angle
