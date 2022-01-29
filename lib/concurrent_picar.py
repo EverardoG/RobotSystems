@@ -1,4 +1,9 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
+"""Module with concurrent operation of the picar-x."""
+
+from readerwriterlock import rwlock
 import bus
 import concurrent.futures
 import picarx_improved
