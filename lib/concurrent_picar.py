@@ -58,9 +58,9 @@ def main():
     # We can use a with statement to ensure threads are cleaned up promptly
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
         # Start each process, which will run forever...
-        thread1 = executor.submit(concurrent_sense,sensor_bus,0.01)
-        thread2 = executor.submit(concurrent_interp,sensor_bus,interp_bus,0.01)
-        thread3 = executor.submit(concurrent_control,interp_bus,0.01)
+        thread1 = executor.submit(concurrent_sense,sensor,sensor_bus,0.01)
+        thread2 = executor.submit(concurrent_interp,interpreter,sensor_bus,interp_bus,0.01)
+        thread3 = executor.submit(concurrent_control,controller,interp_bus,0.01)
 
     thread1.result()
     thread2.result()
