@@ -1,0 +1,66 @@
+
+import bus
+import concurrent.futures
+import picarx_improved
+import time
+import numpy as np
+import atexit
+import line_following_controller as control
+import line_following_interpreter as interp
+import grayscale_module
+import picarx_improved
+from utils import reset_mcu
+reset_mcu()
+import logging
+logging.basicConfig(format="%(asctime)s:%(message)s", level=logging.INFO, datefmt="%H:%M:%S")
+logging.getLogger().setLevel(logging.DEBUG)
+
+
+
+def concurrent_sense(sensor,sensor_bus,sensor_delay):
+    while True:
+        raw_data = sensor.get_grayscale_data()
+        sensor_bus.write(raw_data)
+        time.delay(sensor_delay)
+
+def concurrent_interp(interpreter,sensor_bus,interp_bus,interp_delay):
+    while True:
+        sensor_data = sensor_bus.read()
+        direction = interpreter.get_direction(sensor_data)
+        interp_bus.write(direction)
+        time.delay(interp_delay)
+
+def concurrent_control(controller,interp_bus,control_delay):
+    while True:
+        direction = interp_bus.read()
+        controller.follow_line(direction)
+        time.delay(control_delay)
+
+def init_busses(sensor_bus,interp_bus,sensor,interpreter):
+    """Put valid valid values on the busses before entering operation."""
+    sensor_data = sensor.get_grayscale_data()
+    sensor_bus.write(sensor_data)
+    direction = interpreter.get_direction(sensor_data)
+    interp_bus.write(direction)
+
+def main():
+    logging.getLogger().setLevel(logging.DEBUG)
+    interpreter = interp.Interpreter(proportional_gain=10,derivative_gain=1,line_polarity='darker')
+    sensor = grayscale_module.Grayscale_Module(950)
+    car = picarx_improved.Picarx()
+    controller = control.Controller(car,pwm_percent = 30)
+    controller.fill_buffer(interpreter, sensor)
+    sensor_bus = bus.Bus()
+    interp_bus = bus.Bus()
+    # Put valid valid values on the busses before entering operation.
+    init_busses(sensor_bus,interp_bus,sensor,interpreter)
+
+    # We can use a with statement to ensure threads are cleaned up promptly
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+        # Start each process, which will run forever...
+        thread1 = executor.submit(concurrent_sense,sensor_bus,0.01)
+        thread2 = executor.submit(concurrent_interp,sensor_bus,interp_bus,0.01)
+        thread3 = executor.submit(concurrent_control,interp_bus,0.01)
+
+if __name__ == '__main__':
+    main()
