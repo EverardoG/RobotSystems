@@ -21,20 +21,20 @@ def concurrent_sense(sensor,sensor_bus,sensor_delay):
     while True:
         raw_data = sensor.get_grayscale_data()
         sensor_bus.write(raw_data)
-        time.delay(sensor_delay)
+        time.sleep(sensor_delay)
 
 def concurrent_interp(interpreter,sensor_bus,interp_bus,interp_delay):
     while True:
         sensor_data = sensor_bus.read()
         direction = interpreter.get_direction(sensor_data)
         interp_bus.write(direction)
-        time.delay(interp_delay)
+        time.sleep(interp_delay)
 
 def concurrent_control(controller,interp_bus,control_delay):
     while True:
         direction = interp_bus.read()
         controller.follow_line(direction)
-        time.delay(control_delay)
+        time.sleep(control_delay)
 
 def init_busses(sensor_bus,interp_bus,sensor,interpreter):
     """Put valid valid values on the busses before entering operation."""
