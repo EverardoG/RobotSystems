@@ -62,5 +62,9 @@ def main():
         thread2 = executor.submit(concurrent_interp,sensor_bus,interp_bus,0.01)
         thread3 = executor.submit(concurrent_control,interp_bus,0.01)
 
+    thread1.result()
+    thread2.result()
+    thread3.result()
+
 if __name__ == '__main__':
     main()
