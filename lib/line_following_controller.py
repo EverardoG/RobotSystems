@@ -50,6 +50,9 @@ class Controller(picarx_improved.Picarx):
             raw_data = sensor.get_grayscale_data()
             interpreter.get_direction(raw_data)
 
+    def __call__(self):
+        return
+
     def shutdown(self):
         self.car.stop()
 
