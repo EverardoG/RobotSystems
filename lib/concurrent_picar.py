@@ -65,7 +65,7 @@ def main():
     interp_bus = bus.Bus()
     # Put valid valid values on the busses before entering operation.
     init_busses(sensor_bus,interp_bus,sensor,interpreter)
-    atexit(cleanup, car)
+    atexit.register(cleanup, car)
 
     # We can use a with statement to ensure threads are cleaned up promptly
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
