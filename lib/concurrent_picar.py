@@ -50,7 +50,7 @@ def init_busses(sensor_bus,interp_bus,sensor,interpreter):
     direction = interpreter.get_direction(sensor_data)
     interp_bus.write(direction)
 
-def shutdown(car):
+def cleanup(car):
     car.stop()
 
 def main():
@@ -65,7 +65,7 @@ def main():
     interp_bus = bus.Bus()
     # Put valid valid values on the busses before entering operation.
     init_busses(sensor_bus,interp_bus,sensor,interpreter)
-    atexit(shutdown, car)
+    atexit(cleanup, car)
 
     # We can use a with statement to ensure threads are cleaned up promptly
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
