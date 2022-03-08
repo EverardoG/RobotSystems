@@ -2,25 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import time
-import sys
-sys.path.append(r'/home/pi/picar-x/lib')
 from utils import reset_mcu
 reset_mcu()
-
-from picarx import Picarx
-from ultrasonic import Ultrasonic
 from pin import Pin
-
-
-import picarx_improved
-import time
-import numpy as np
-import atexit
-import line_following_interpreter as interp
-import grayscale_module
-import picarx_improved
-from utils import reset_mcu
-reset_mcu()
 
 
 class Ultrasonic():
