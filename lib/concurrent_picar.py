@@ -50,6 +50,9 @@ def init_busses(sensor_bus,interp_bus,sensor,interpreter):
     direction = interpreter.get_direction(sensor_data)
     interp_bus.write(direction)
 
+def shutdown(car):
+    car.stop()
+
 def main():
     logging.getLogger().setLevel(logging.DEBUG)
     interpreter = interp.Interpreter(proportional_gain=10,derivative_gain=1,line_polarity='darker')
@@ -62,6 +65,7 @@ def main():
     interp_bus = bus.Bus()
     # Put valid valid values on the busses before entering operation.
     init_busses(sensor_bus,interp_bus,sensor,interpreter)
+    atexit(shutdown, car)
 
     # We can use a with statement to ensure threads are cleaned up promptly
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
@@ -69,7 +73,6 @@ def main():
         thread1 = executor.submit(concurrent_sense,sensor,sensor_bus,0.01)
         thread2 = executor.submit(concurrent_interp,interpreter,sensor_bus,interp_bus,0.01)
         thread3 = executor.submit(concurrent_control,controller,sonar,interp_bus,0.01)
-
     thread1.result()
     thread2.result()
     thread3.result()
