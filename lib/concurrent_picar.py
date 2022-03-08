@@ -38,9 +38,9 @@ def concurrent_interp(interpreter,sensor_bus,interp_bus,interp_delay):
 
 def concurrent_control(controller,sonar,interp_bus,control_delay):
     while True:
-        # ultrasonic = sonar.read()
+        obstacle = sonar.obstacle()
         direction = interp_bus.read()
-        controller.follow_line_with_ultrasonic(direction,ultrasonic)
+        controller.follow_line_with_ultrasonic(direction,obstacle)
         time.sleep(control_delay)
 
 def init_busses(sensor_bus,interp_bus,sensor,interpreter):

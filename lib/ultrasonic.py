@@ -41,8 +41,12 @@ class Ultrasonic():
                 return a
         return -1
 
-    def obstacle(self,dist):
-        pass
+    def obstacle(self):
+        dist = self.read()
+        if dist > 0 and dist <=5:
+            return True
+        else:
+            return False
 
 
 def main():
