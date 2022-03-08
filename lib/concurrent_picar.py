@@ -12,6 +12,7 @@ import numpy as np
 import atexit
 import line_following_controller as control
 import line_following_interpreter as interp
+from ultrasonic import Ultrasonic
 import grayscale_module
 import picarx_improved
 from utils import reset_mcu
@@ -35,10 +36,11 @@ def concurrent_interp(interpreter,sensor_bus,interp_bus,interp_delay):
         interp_bus.write(direction)
         time.sleep(interp_delay)
 
-def concurrent_control(controller,interp_bus,control_delay):
+def concurrent_control(controller,sonar,interp_bus,control_delay):
     while True:
+        # ultrasonic = sonar.read()
         direction = interp_bus.read()
-        controller.follow_line(direction)
+        controller.follow_line_with_ultrasonic(direction,ultrasonic)
         time.sleep(control_delay)
 
 def init_busses(sensor_bus,interp_bus,sensor,interpreter):
@@ -53,6 +55,7 @@ def main():
     interpreter = interp.Interpreter(proportional_gain=10,derivative_gain=1,line_polarity='darker')
     sensor = grayscale_module.Grayscale_Module(950)
     car = picarx_improved.Picarx()
+    sonar = Ultrasonic()
     controller = control.Controller(car,pwm_percent = 30)
     controller.fill_buffer(interpreter, sensor)
     sensor_bus = bus.Bus()
@@ -65,7 +68,7 @@ def main():
         # Start each process, which will run forever...
         thread1 = executor.submit(concurrent_sense,sensor,sensor_bus,0.01)
         thread2 = executor.submit(concurrent_interp,interpreter,sensor_bus,interp_bus,0.01)
-        thread3 = executor.submit(concurrent_control,controller,interp_bus,0.01)
+        thread3 = executor.submit(concurrent_control,controller,sonar,interp_bus,0.01)
 
     thread1.result()
     thread2.result()

@@ -11,9 +11,7 @@ from pin import Pin
 
 if __name__ == "__main__":
     try:
-        trig_pin = Pin("D2") 
-        echo_pin = Pin("D3")
-        sonar = Ultrasonic(trig_pin, echo_pin)
+        sonar = Ultrasonic()
         px = Picarx()
         px.forward(30)
         while True:

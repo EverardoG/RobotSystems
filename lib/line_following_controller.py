@@ -44,6 +44,20 @@ class Controller(picarx_improved.Picarx):
         self.car.forward(self.pwm_percent)
         return goal_steering_angle
 
+    def follow_line_with_ultrasonic(self,direction,ultrasonic):
+        """Follow a line for one sample reading. """
+        goal_steering_angle_raw = self._get_steering_angle(direction)
+        # add steering angle to a FIFO queue, and take average to smooth out commands.
+        self.dir_vals.append(goal_steering_angle_raw)
+        del self.dir_vals[0]
+        goal_steering_angle = np.average(self.dir_vals)
+        self.car.set_dir_servo_angle(goal_steering_angle)
+        if not ultrasonic: #TODO
+            self.car.forward(0)
+        else:
+            self.car.forward(self.pwm_percent)
+        return goal_steering_angle
+
     def fill_buffer(self,interpreter,sensor):
         """Sensor needs to fill a buffer before starting to move."""
         while not interpreter.buffer_full:
