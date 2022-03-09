@@ -43,6 +43,7 @@ class Ultrasonic():
 
     def obstacle(self):
         dist = self.read()
+        print("Distancd: {}".format(dist))
         if dist > 0 and dist <=5:
             return True
         else:
