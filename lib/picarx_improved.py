@@ -55,6 +55,7 @@ class Picarx(object):
         self.S1 = ADC('A1')
         self.S2 = ADC('A2')
         self.turn_limit = 30
+        self.stop == False
 
         self.motor_direction_pins = [self.left_rear_dir_pin, self.right_rear_dir_pin]
         self.motor_speed_pins = [self.left_rear_pwm_pin, self.right_rear_pwm_pin]
@@ -205,6 +206,8 @@ class Picarx(object):
     @log_on_start(logging.DEBUG, "[forward] speed: {speed}")
     @log_on_error(logging.DEBUG, "[forward] Error")
     def forward(self,speed):
+        if self.stop == True:
+            return
         current_angle = self.dir_current_angle
         if current_angle == 0: # Both motors go same speed.
             self.set_motor_speed(1, speed)
@@ -232,6 +235,7 @@ class Picarx(object):
     def stop(self):
         self.set_motor_speed(1, 0)
         self.set_motor_speed(2, 0)
+        self.stop=True
 
     @log_on_start(logging.DEBUG, "[Get_distance] Enter")
     @log_on_error(logging.DEBUG, "[Get_distance] Error")
