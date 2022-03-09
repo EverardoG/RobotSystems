@@ -52,6 +52,7 @@ def init_busses(sensor_bus,interp_bus,sensor,interpreter):
 
 def cleanup(executor,car):
     executor.shutdown()
+    time.sleep(0.5)
     car.stop()
 
 def main():
