@@ -26,6 +26,12 @@ class Controller(picarx_improved.Picarx):
         self.steering_angle_range = [-90, 90]  # Range is larger than actual range of motion to allow for more responsiveness.
         self.move_ave_num = 1
         self.dir_vals = [0]*self.move_ave_num  # Queue used to smooth out direction commands.
+        # Check in an obstacle was detected previously
+        self.prev_obstacle = False
+        self.waiting = False
+        self.start_waiting = 0
+        self.wait_time = 5 # seconds
+        # Save time the obstacle 
         atexit.register(self.shutdown)
 
     def _get_steering_angle(self,direction):
@@ -52,10 +58,28 @@ class Controller(picarx_improved.Picarx):
         del self.dir_vals[0]
         goal_steering_angle = np.average(self.dir_vals)
         self.car.set_dir_servo_angle(goal_steering_angle)
+        # Stop moving if obstacle was detected
         if obstacle:
+            logging.info("Obstacle, Stop moving")
             self.car.forward(0)
+        # Wait to move if obstacle was just removed
+        elif self.prev_obstacle and not obstacle and not self.waiting:
+            logging.info("Obstacle was just removed. Start waiting.")
+            self.waiting = True
+            self.start_waiting = time.time()
+        # Break out of waiting if enough time has passed since obstacle was removed
+        elif self.waiting:
+            logging.info("Waiting.")
+            if time.time() - self.start_waiting >= self.wait_time:
+                logging.info("Break out of waiting.")
+                self.waiting = False
+                self.car.forward(self.pwm_percent)
+        # Otherwise just move
         else:
+            logging.info("No obstacle, moving foward")
             self.car.forward(self.pwm_percent)
+        # Update previous reading for whether obstacle was detected
+        self.prev_obstacle = obstacle
         return goal_steering_angle
 
     def fill_buffer(self,interpreter,sensor):

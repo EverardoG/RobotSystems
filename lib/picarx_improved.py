@@ -8,13 +8,17 @@ import time
 import numpy as np
 import atexit
 import platform
-if platform.node() == 'raspberrypi':  # Import real classes.
+print(platform.node())
+if platform.node() == 'raspberrypi' or platform.node() == 'cecilia':  # Import real classes if platform.node() is the name of a picar
+    
+    print("importing raspi classes")
     from servo import Servo
     from pwm import PWM
     from pin import Pin
     from adc import ADC
     from filedb import fileDB
 else: # Not being run on the raspberry pi. Import simulation classes.
+    print("importing simulation classes")
     from servo_sim import Servo
     from pwm_sim import PWM
     from pin_sim import Pin

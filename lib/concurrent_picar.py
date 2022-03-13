@@ -26,6 +26,7 @@ logging.getLogger().setLevel(logging.DEBUG)
 def concurrent_sense(sensor,sensor_bus,sensor_delay):
     while True:
         raw_data = sensor.get_grayscale_data()
+        logging.info(f"sensor_data: {raw_data}")
         sensor_bus.write(raw_data)
         time.sleep(sensor_delay)
 
@@ -38,6 +39,7 @@ def concurrent_interp(interpreter,sensor_bus,interp_bus,interp_delay):
 
 def concurrent_control(controller,sonar,interp_bus,control_delay):
     while True:
+        logging.info("Control Heartbeat")
         obstacle = sonar.obstacle()
         direction = interp_bus.read()
         controller.follow_line_with_ultrasonic(direction,obstacle)
@@ -57,8 +59,8 @@ def cleanup(executor,car):
 
 def main():
     logging.getLogger().setLevel(logging.DEBUG)
-    interpreter = interp.Interpreter(proportional_gain=10,derivative_gain=1,line_polarity='darker')
-    sensor = grayscale_module.Grayscale_Module(950)
+    interpreter = interp.Interpreter(proportional_gain=3,derivative_gain=0,line_polarity='darker')
+    sensor = grayscale_module.Grayscale_Module(950) #950
     car = picarx_improved.Picarx()
     sonar = Ultrasonic()
     controller = control.Controller(car,pwm_percent = 30)
